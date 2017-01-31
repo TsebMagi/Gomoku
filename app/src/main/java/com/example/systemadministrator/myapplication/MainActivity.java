@@ -1,5 +1,6 @@
 package com.example.systemadministrator.myapplication;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -28,6 +29,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void onPlayClick(View v) {
         //TODO update screen transition to package the info gathered here.
+        Intent intent = new Intent(MainActivity.this, BoardActivity.class);
+        Bundle boardVars = new Bundle();
+        boardVars.putInt("Size", size);
+        intent.putExtras(boardVars);
+        startActivity(intent);
+        finish();
     }
 
     public void on1PlayerClick(View v) {

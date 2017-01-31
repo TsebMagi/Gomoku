@@ -9,17 +9,20 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.example.systemadministrator.Gomoku.R;
 
 public class BoardActivity extends AppCompatActivity {
 
     //Working Board
-    int dimension = 15;
-    private ImageView[][] boardArray = new ImageView[dimension][dimension];
+    int dimension;
+    int players;
+    char style;
+    private ImageView[][] boardArray;
     private Context context;
-    private int[][] piecesOnBoard = new int[dimension][dimension]; //0 is uninitialized, 1 or 2 to represent players pieces, 3 is empty
-    private Drawable[] drawCell = new Drawable[3];//0 is empty, 1 or 2 for different player pieces
+    private int[][] piecesOnBoard; //0 is uninitialized, 1 or 2 to represent players pieces, 3 is empty
+    private Drawable[] drawCell = new Drawable[3]; //0 is empty, 1 or 2 for different player pieces
     private int xPos, yPos; // x and y position of move
     private int playerTurn; // which players turn it is
 
@@ -27,8 +30,14 @@ public class BoardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
+
+        dimension = (int) getIntent().getSerializableExtra("Size");
+        piecesOnBoard = new int[dimension][dimension];
+        boardArray = new ImageView[dimension][dimension];
+
         context = this;
         playerTurn = 1;
+
         loadResources();
         createBoard();
         init_board();

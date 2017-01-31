@@ -41,7 +41,7 @@
         android:layout_below="@+id/PlayerNumText"
         android:layout_centerHorizontal="true"
         android:id="@+id/PlayerButtonGroup"
-        android:checkedButton="@+id/onePlayerButton">
+        android:checkedButton="@+id/twoPlayerButton">
 
         <RadioButton
             android:text="@string/_1_player"
@@ -49,14 +49,15 @@
             android:layout_height="wrap_content"
             android:id="@+id/onePlayerButton"
             android:layout_weight="1"
-            />
+            android:onClick="on1PlayerClick" />
 
         <RadioButton
             android:text="@string/_2_player"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/twoPlayerButton"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:onClick="on2PlayerClick" />
     </RadioGroup>
 
     <TextView
@@ -78,28 +79,31 @@
         android:layout_below="@+id/BoardSizetext"
         android:layout_centerHorizontal="true"
         android:id="@+id/BoardSizeButtonGroup"
-        android:checkedButton="@+id/tenXButton">
+        android:checkedButton="@+id/fifteenXButton">
 
         <RadioButton
             android:text="@string/_10_x_10"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/tenXButton"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:onClick="on10XClick" />
 
         <RadioButton
             android:text="@string/_15_x_15"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/fifteenXButton"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:onClick="on15XClick" />
 
         <RadioButton
             android:text="@string/_20_x_20"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/twentyXButton"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:onClick="on20XClick" />
 
     </RadioGroup>
 
@@ -130,14 +134,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/ClassicStyleButton"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:onClick="onClassicClick" />
 
         <RadioButton
             android:text="@string/freestyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/freestyleButton"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:onClick="onFreestyleClick" />
     </RadioGroup>
 
     <Button
