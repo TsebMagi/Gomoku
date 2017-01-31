@@ -1,7 +1,0 @@
-#Sun Jan 29 10:16:23 PST 2017
-base.0=C\:\\Users\\System Administrator\\StudioProjects\\MyApplication\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\instant-run-bootstrap_fc6d5c454c76bd0a94afe5b7ad0400fb974a0d70
-renamed.1=classes2.dex
-renamed.0=classes.dex
-file.1=C\:\\Users\\System Administrator\\StudioProjects\\MyApplication\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\instant-run_3cac872663d4e82fc0989f1a3290cc0ee46d83b1\\classes.dex
-base.1=C\:\\Users\\System Administrator\\StudioProjects\\MyApplication\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\instant-run_3cac872663d4e82fc0989f1a3290cc0ee46d83b1
-file.0=C\:\\Users\\System Administrator\\StudioProjects\\MyApplication\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\instant-run-bootstrap_fc6d5c454c76bd0a94afe5b7ad0400fb974a0d70\\classes.dex
