@@ -12,4 +12,8 @@
     <string name="classic">Classic</string>
     <string name="freestyle">Freestyle</string>
     <string name="play">Play</string>
+
+    <string name="title_activity_board">BoardActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>
