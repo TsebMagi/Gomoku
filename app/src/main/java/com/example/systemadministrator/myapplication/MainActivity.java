@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
         boardVars.putInt("Size", size);
         intent.putExtras(boardVars);
         startActivity(intent);
-        finish();
     }
 
     public void on1PlayerClick(View v) {
