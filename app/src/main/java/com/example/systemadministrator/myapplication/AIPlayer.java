@@ -6,11 +6,14 @@ package com.example.systemadministrator.myapplication;
 
 public class AIPlayer extends Player {
 
+    private int coor;
+
     public AIPlayer(){
         super();
+        coor = 0;
     }
 
     public Coordinates generateMove(GameBoard board){
-        return new Coordinates(0, 0);
+        return new Coordinates(coor, coor++);
     }
 }

@@ -54,21 +54,6 @@ public class BoardActivity extends AppCompatActivity {
         createBoard();
 
         players[playerTurn-1].setHasChosen(false);
-        /*
-        while(piecesOnBoard.gameOver() == 0){
-            if(playerTurn == 1)
-                allowMove(players[0], players[1]);
-            else
-                allowMove(players[1], players[0]);
-        }
-
-
-        CharSequence text = "Someome has won the game.";
-        int duration = Toast.LENGTH_LONG;
-
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
-        */
 
     }
 
@@ -96,7 +81,7 @@ public class BoardActivity extends AppCompatActivity {
                 boardArray[i][j].setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (!players[playerTurn-1].hasChosen() && piecesOnBoard.getPieceAtXY(x,y) == 0) { // make sure cell is empty
+                        if (!players[playerTurn-1].hasChosen() && players[playerTurn-1] instanceof humanPlayer && piecesOnBoard.getPieceAtXY(x,y) == 0) { // make sure cell is empty
                             xPos = x;
                             yPos = y; //when a location is clicked it sets global x,y variables to be accessed in other functions
                             makeMove();
@@ -113,44 +98,47 @@ public class BoardActivity extends AppCompatActivity {
         boardArray[xPos][yPos].setImageDrawable(drawCell[playerTurn]); //put players piece on space chosen
         piecesOnBoard.placePiece(playerTurn, xPos, yPos); //keep track of board in 2d array data structure
 
-        if (playerTurn == 1) {
+        if (playerTurn == 1 && players[0].hasChosen == false) {
             players[0].setHasChosen(true);
             players[1].setHasChosen(false);
             playerTurn = 2;
-        } else {
+            if (players[1] instanceof networkPlayer)
+                ((networkPlayer) players[1]).sendMove(xPos, yPos);
+            else if (players[1] instanceof AIPlayer) {
+                Coordinates move = ((AIPlayer) players[1]).generateMove(piecesOnBoard);
+                while (piecesOnBoard.getPieceAtXY(move.x, move.y) != 0)
+                    move = ((AIPlayer) players[1]).generateMove(piecesOnBoard);
+                makeMove(move);
+            }
+        }
+        else if(players[1].hasChosen == false){
             players[1].setHasChosen(true);
             players[0].setHasChosen(false);
             playerTurn = 1;
+            if(players[0] instanceof networkPlayer)
+                ((networkPlayer) players[1]).sendMove(xPos, yPos);
+            else if(players[0] instanceof AIPlayer){
+                Coordinates move = ((AIPlayer) players[1]).generateMove(piecesOnBoard);
+                while(piecesOnBoard.getPieceAtXY(move.x, move.y) != 0)
+                    move = ((AIPlayer) players[1]).generateMove(piecesOnBoard);
+                makeMove(move);
+            }
         }
     }
 
     private void makeMove(Coordinates move) {
         boardArray[move.x][move.y].setImageDrawable(drawCell[playerTurn]); //put players piece on space chosen
         piecesOnBoard.placePiece(playerTurn, move.x, move.y); //keep track of board in 2d array data structure
-
         if (playerTurn == 1) {
             players[0].setHasChosen(true);
             players[1].setHasChosen(false);
             playerTurn = 2;
-        } else {
+        }
+        else{
             players[1].setHasChosen(true);
             players[0].setHasChosen(false);
             playerTurn = 1;
         }
-    }
-
-    private void allowMove(Player player1, Player player2){
-        if(player1 instanceof humanPlayer){
-            while(!player1.hasChosen());
-            if(player2 instanceof networkPlayer)
-                ((networkPlayer) player2).sendMove(xPos, yPos);
-        }
-        else if(player1 instanceof networkPlayer){
-            while(((networkPlayer) player1).getNextMove() == null);
-            makeMove(((networkPlayer) player1).getNextMove());
-        }
-        else
-            makeMove(((AIPlayer) player1).generateMove(piecesOnBoard));
     }
 
     private float ScreenWidth() {
