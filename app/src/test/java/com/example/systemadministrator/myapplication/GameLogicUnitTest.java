@@ -15,4 +15,10 @@ public class GameLogicUnitTest {
     public void addition_isCorrect() throws Exception {
         assertEquals(4, 2 + 2);
     }
+
+    @Test
+    public void emptyBoard () {
+        //0 = game still going, 1 or 2 = player win, 3 = tie
+        //assertEquals(gameOver(),0);
+    }
 }
