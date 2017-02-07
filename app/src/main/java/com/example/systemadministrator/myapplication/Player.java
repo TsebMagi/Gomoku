@@ -6,12 +6,20 @@ import java.util.Timer;
  * Created by Doug Whitley on 1/29/2017.
  */
 
-public class Player {
-    public Player(){}
-    //TODO write player functions
-    public void startTurn(){}
-    public void endTurn(){}
+abstract public class Player {
+    protected boolean hasChosen;
+    protected Timer turnTime;
+    protected  boolean baseTimeUsed;
 
-    private Timer turnTime;
-    private  boolean baseTimeUsed;
+    public Player(){
+        this.hasChosen = true; // by default cannot make move
+    }
+
+    public boolean hasChosen(){
+        return hasChosen;
+    }
+
+    public void setHasChosen(boolean newBool){
+        hasChosen = newBool;
+    }
 }
