@@ -32,6 +32,10 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, BoardActivity.class);
         Bundle boardVars = new Bundle();
         boardVars.putInt("Size", size);
+        if(players == 2)
+            boardVars.putString("Opponent", "Human");
+        else
+            boardVars.putString("Opponent", "AI");
         intent.putExtras(boardVars);
         startActivity(intent);
     }
