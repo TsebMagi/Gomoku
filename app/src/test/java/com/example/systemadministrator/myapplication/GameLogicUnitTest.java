@@ -19,6 +19,7 @@ public class GameLogicUnitTest {
     @Test
     public void emptyBoard () {
         //0 = game still going, 1 or 2 = player win, 3 = tie
-        //assertEquals(gameOver(),0);
+        GameBoard board = new GameBoard(10);
+        assertEquals(board.gameOver(), 0);
     }
 }
