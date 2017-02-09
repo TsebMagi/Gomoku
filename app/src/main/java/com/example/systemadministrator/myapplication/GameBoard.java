@@ -36,7 +36,7 @@ public class GameBoard {
         return true;
     }
 
-    //FIXME write algorithm for gameOver
+    //TODO FIXME write algorithm for gameOver
     public int gameOver(){
         if(board[0][0] == 1 || board[0][0] == 2 && board[0][0] == board[0][1] && board[0][1] == board[0][2] && board[0][2] == board[0][3] && board[0][3] == board[0][4])
             return 1;
@@ -44,7 +44,7 @@ public class GameBoard {
             return 0;
     }
 
-    //FIXME write algorithm for longest streak
+    //TODO FIXME write algorithm for longest streak
     public streakObj getLongestStreak(){
         return new streakObj(new Coordinates(0,0), new Coordinates(0,0), 0, 0);
     }
@@ -63,5 +63,11 @@ public class GameBoard {
         for (int i = 0; i < boardSize; ++i)
             for (int j=0; j < boardSize; ++j)
                 board[i][j] = 0;
+    }
+
+    //TODO implement game state code
+    public streakObj[] gameState () {
+
+        return null;
     }
 }
