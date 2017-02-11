@@ -10,6 +10,10 @@ public class GameBoard {
     private int[][] board;
     private int boardSize;
 
+    //used for the game state algorithms
+    private streakObj[] player1Streaks;
+    private streakObj[] player2Streaks;
+
     //constructors for the game board
     //dafault constructor that sets game board size to 10x10
     public GameBoard(){

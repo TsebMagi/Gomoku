@@ -17,4 +17,24 @@ public class streakObj {
         this.playerNumber = playerNumber;
     }
 
+    public boolean contains(streakObj toCompare) {
+        int x1 = this.startPiece.x;
+        int y1 = this.startPiece.y;
+        int x2 = this.endPiece.x;
+        int y2 = this.endPiece.y;
+
+        //case vertical lines
+        if (x1 == x2 && toCompare.startPiece.x == toCompare.endPiece.x && x1 == toCompare.startPiece.x) {
+            return toCompare.startPiece.y >= y1 && toCompare.endPiece.y <= y2;
+        }
+
+        //case Diagonal and Horizontal Lines
+        //y = y1 + ((y2 - y1) / (x2 - x1)) * (x - x1)
+        if (x2 - x1 != 0 && toCompare.startPiece.y == y1 + ((y2 - y1) / (x2 - x1)) * (toCompare.startPiece.x - x1)) {
+            if (toCompare.endPiece.y == y1 + ((y2 - y1) / (x2 - x1)) * (toCompare.endPiece.x - x1))
+                return true;
+        }
+        return false;
+    }
+
 }
