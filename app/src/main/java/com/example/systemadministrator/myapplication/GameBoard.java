@@ -36,12 +36,43 @@ public class GameBoard {
         return true;
     }
 
-    //TODO FIXME write algorithm for gameOver
+    //Might be too brute force, but from what I've seen, it works. Don't cover the edge cases where both ends aren't covered. Basic game over check.
     public int gameOver(){
-        if(board[0][0] == 1 || board[0][0] == 2 && board[0][0] == board[0][1] && board[0][1] == board[0][2] && board[0][2] == board[0][3] && board[0][3] == board[0][4])
-            return 1;
-        else
-            return 0;
+        int counter1 = 0;
+        int counter2 = 0;
+        for(int i = 0; i< boardSize; i++){
+            for(int j = 0; j< boardSize; j++){
+                if(board[i][j] == 1) {
+                    if(board[i][j] == board[i+1][j] && board[i][j] == board[i+2][j] && board[i][j] == board[i+3][j] && board[i][j] == board[i+4][j]) {
+                        return 1;
+                    }
+                    if(board[i][j] == board[i][j+1] && board[i][j] == board[i][j+2] && board[i][j] == board[i][j+3] && board[i][j] == board[i][j+4]) {
+                        return 1;
+                    }
+                    if(board[i][j] == board[i+1][j+1] && board[i][j] == board[i+2][j+2] && board[i][j] == board[i+3][j+3] && board[i][j] == board[i+4][j+4]) {
+                        return 1;
+                    }
+                    if(board[i][j] == board[i+1][j-1] && board[i][j] == board[i+2][j-2] && board[i][j] == board[i+3][j-3] && board[i][j] == board[i+4][j-4]) {
+                        return 1;
+                    }
+                }
+                else if(board[i][j] == 2) {
+                    if(board[i][j] == board[i+1][j] && board[i][j] == board[i+2][j] && board[i][j] == board[i+3][j] && board[i][j] == board[i+4][j]) {
+                        return 2;
+                    }
+                    if(board[i][j] == board[i][j+1] && board[i][j] == board[i][j+2] && board[i][j] == board[i][j+3] && board[i][j] == board[i][j+4]) {
+                        return 2;
+                    }
+                    if(board[i][j] == board[i+1][j+1] && board[i][j] == board[i+2][j+2] && board[i][j] == board[i+3][j+3] && board[i][j] == board[i+4][j+4]) {
+                        return 2;
+                    }
+                    if(board[i][j] == board[i+1][j-1] && board[i][j] == board[i+2][j-2] && board[i][j] == board[i+3][j-3] && board[i][j] == board[i+4][j-4]) {
+                        return 2;
+                    }
+                }
+            }
+        }
+        return 0;
     }
 
     //TODO FIXME write algorithm for longest streak
@@ -65,9 +96,19 @@ public class GameBoard {
                 board[i][j] = 0;
     }
 
-    //TODO implement game state code
-    public streakObj[] gameState () {
+    //This just prints out to console. This is for my testing purposes.
+    public void gameState () {
+        int gameOver;
+        for(int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++) {
+                System.out.print(board[i][j] + ",");
+            }
+            System.out.println("");
+        }
+        gameOver = gameOver();
+        if(gameOver != 0) {
+            System.out.println("Game Over. Player "+gameOver+" wins!");
+        }
 
-        return null;
     }
 }

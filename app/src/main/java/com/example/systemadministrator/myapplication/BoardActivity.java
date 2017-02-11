@@ -97,7 +97,6 @@ public class BoardActivity extends AppCompatActivity {
     private void makeMove() {
         boardArray[xPos][yPos].setImageDrawable(drawCell[playerTurn]); //put players piece on space chosen
         piecesOnBoard.placePiece(playerTurn, xPos, yPos); //keep track of board in 2d array data structure
-
         if (playerTurn == 1 && players[0].hasChosen == false) {
             players[0].setHasChosen(true);
             players[1].setHasChosen(false);
@@ -124,6 +123,7 @@ public class BoardActivity extends AppCompatActivity {
                 makeMove(move);
             }
         }
+        piecesOnBoard.gameState();
     }
 
     private void makeMove(Coordinates move) {
