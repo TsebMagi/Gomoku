@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -28,6 +29,7 @@ public class BoardActivity extends AppCompatActivity {
     private Drawable[] drawCell = new Drawable[3]; //0 is empty, 1 or 2 for different player pieces
     private int xPos, yPos; // x and y position of move
     private int playerTurn; // which players turn it is
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +125,10 @@ public class BoardActivity extends AppCompatActivity {
                 makeMove(move);
             }
         }
-        piecesOnBoard.gameState();
+        if(piecesOnBoard.gameOver() != 0) {
+            //Instead of printing, next step is to have popup declaring winner or something?
+            System.out.println("winner is "+piecesOnBoard.gameOver());
+        }
     }
 
     private void makeMove(Coordinates move) {

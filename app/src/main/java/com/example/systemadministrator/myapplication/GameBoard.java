@@ -36,10 +36,10 @@ public class GameBoard {
         return true;
     }
 
-    //Might be too brute force, but from what I've seen, it works. Don't cover the edge cases where both ends aren't covered. Basic game over check.
+    //Might be too brute force, but from what I've seen, it works.
+    //TODO need to make it so players can not make any more moves after game over
+    //TODO need to make it so winner will not win if both sides are covered.
     public int gameOver(){
-        int counter1 = 0;
-        int counter2 = 0;
         for(int i = 0; i< boardSize; i++){
             for(int j = 0; j< boardSize; j++){
                 if(board[i][j] == 1) {
@@ -96,19 +96,4 @@ public class GameBoard {
                 board[i][j] = 0;
     }
 
-    //This just prints out to console. This is for my testing purposes.
-    public void gameState () {
-        int gameOver;
-        for(int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < boardSize; j++) {
-                System.out.print(board[i][j] + ",");
-            }
-            System.out.println("");
-        }
-        gameOver = gameOver();
-        if(gameOver != 0) {
-            System.out.println("Game Over. Player "+gameOver+" wins!");
-        }
-
-    }
 }

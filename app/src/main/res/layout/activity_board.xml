@@ -14,6 +14,5 @@
         android:layout_margin="50px"
         android:id = "@+id/Board">
 
-
     </LinearLayout>
 </RelativeLayout>
