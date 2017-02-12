@@ -9,9 +9,6 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
-import android.util.Log;
-import android.os.Handler;
 
 import com.example.systemadministrator.Gomoku.R;
 
@@ -38,9 +35,9 @@ public class BoardActivity extends AppCompatActivity {
         dimension = extras.getInt("Size");
         player2Type = extras.getString("Opponent");
 
-        players[0] = new humanPlayer();
+        players[0] = new HumanPlayer();
         if(player2Type.equals("Human"))
-            players[1] = new humanPlayer();
+            players[1] = new HumanPlayer();
         else
             players[1] = new AIPlayer();
 
@@ -81,7 +78,7 @@ public class BoardActivity extends AppCompatActivity {
                 boardArray[i][j].setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (!players[playerTurn-1].hasChosen() && players[playerTurn-1] instanceof humanPlayer && piecesOnBoard.getPieceAtXY(x,y) == 0) { // make sure cell is empty
+                        if (!players[playerTurn-1].hasChosen() && players[playerTurn-1] instanceof HumanPlayer && piecesOnBoard.getPieceAtXY(x,y) == 0) { // make sure cell is empty
                             xPos = x;
                             yPos = y; //when a location is clicked it sets global x,y variables to be accessed in other functions
                             makeMove();
@@ -102,8 +99,8 @@ public class BoardActivity extends AppCompatActivity {
             players[0].setHasChosen(true);
             players[1].setHasChosen(false);
             playerTurn = 2;
-            if (players[1] instanceof networkPlayer)
-                ((networkPlayer) players[1]).sendMove(xPos, yPos);
+            if (players[1] instanceof NetworkPlayer)
+                ((NetworkPlayer) players[1]).sendMove(xPos, yPos);
             else if (players[1] instanceof AIPlayer) {
                 Coordinates move = ((AIPlayer) players[1]).generateMove(piecesOnBoard);
                 while (piecesOnBoard.getPieceAtXY(move.x, move.y) != 0)
@@ -115,8 +112,8 @@ public class BoardActivity extends AppCompatActivity {
             players[1].setHasChosen(true);
             players[0].setHasChosen(false);
             playerTurn = 1;
-            if(players[0] instanceof networkPlayer)
-                ((networkPlayer) players[1]).sendMove(xPos, yPos);
+            if(players[0] instanceof NetworkPlayer)
+                ((NetworkPlayer) players[1]).sendMove(xPos, yPos);
             else if(players[0] instanceof AIPlayer){
                 Coordinates move = ((AIPlayer) players[1]).generateMove(piecesOnBoard);
                 while(piecesOnBoard.getPieceAtXY(move.x, move.y) != 0)

@@ -4,20 +4,20 @@ package com.example.systemadministrator.myapplication;
  * Created by Tanner on 2/6/2017.
  */
 
-public class streakObj {
+public class StreakObj {
     public final Coordinates startPiece;
     public final Coordinates endPiece;
     public final int length;
     public final int playerNumber;
 
-    public streakObj(Coordinates startPiece, Coordinates endPiece, int length, int playerNumber) {
+    public StreakObj(Coordinates startPiece, Coordinates endPiece, int length, int playerNumber) {
         this.startPiece = startPiece;
         this.endPiece = endPiece;
         this.length = length;
         this.playerNumber = playerNumber;
     }
 
-    public boolean contains(streakObj toCompare) {
+    public boolean contains(StreakObj toCompare) {
         int x1 = this.startPiece.x;
         int y1 = this.startPiece.y;
         int x2 = this.endPiece.x;
