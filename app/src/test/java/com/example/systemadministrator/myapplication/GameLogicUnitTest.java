@@ -85,4 +85,22 @@ public class GameLogicUnitTest {
         assertEquals((7/2)%2,1);
         assertEquals(board.gameOver(), 3);
     }
+
+    @Test
+    public void blockedByEdge () {
+        GameBoard board = new GameBoard(15);
+        for(int i = 0; i < 5; i++){
+            board.placePiece(1, i, 0);
+        }
+        assertEquals(board.gameOver(), 0);
+    }
+
+    @Test
+    public void blockedByEdge2 () {
+        GameBoard board = new GameBoard(15);
+        for(int i = 10; i < 15; i++){
+            board.placePiece(2, i, i);
+        }
+        assertEquals(board.gameOver(), 0);
+    }
 }
