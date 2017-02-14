@@ -89,6 +89,7 @@ public class GameLogicUnitTest {
     @Test
     public void blockedByEdge () {
         GameBoard board = new GameBoard(15);
+        board.placePiece(2, 5, 0);
         for(int i = 0; i < 5; i++){
             board.placePiece(1, i, 0);
         }
@@ -98,6 +99,7 @@ public class GameLogicUnitTest {
     @Test
     public void blockedByEdge2 () {
         GameBoard board = new GameBoard(15);
+        board.placePiece(1, 9, 9);
         for(int i = 10; i < 15; i++){
             board.placePiece(2, i, i);
         }
