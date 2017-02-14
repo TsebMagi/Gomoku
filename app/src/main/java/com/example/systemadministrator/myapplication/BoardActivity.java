@@ -9,6 +9,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.example.systemadministrator.Gomoku.R;
 
@@ -94,6 +95,7 @@ public class BoardActivity extends AppCompatActivity {
     private void makeMove() {
         boardArray[xPos][yPos].setImageDrawable(drawCell[playerTurn]); //put players piece on space chosen
         piecesOnBoard.placePiece(playerTurn, xPos, yPos); //keep track of board in 2d array data structure
+        checkGameOver();
 
         if (playerTurn == 1 && players[0].hasChosen == false) {
             players[0].setHasChosen(true);
@@ -126,6 +128,8 @@ public class BoardActivity extends AppCompatActivity {
     private void makeMove(Coordinates move) {
         boardArray[move.x][move.y].setImageDrawable(drawCell[playerTurn]); //put players piece on space chosen
         piecesOnBoard.placePiece(playerTurn, move.x, move.y); //keep track of board in 2d array data structure
+        checkGameOver();
+        
         if (playerTurn == 1) {
             players[0].setHasChosen(true);
             players[1].setHasChosen(false);
@@ -135,6 +139,23 @@ public class BoardActivity extends AppCompatActivity {
             players[1].setHasChosen(true);
             players[0].setHasChosen(false);
             playerTurn = 1;
+        }
+    }
+
+    private void checkGameOver(){
+        int result = piecesOnBoard.gameOver();
+        CharSequence text;
+        if(result != 0){
+            if(result == 1)
+                text = "Player 1 wins!";
+            else if(result == 2)
+                text = "Player 2 wins!";
+            else
+                text = "Tie Game! Nobody wins";
+            Context context = getApplicationContext();
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
         }
     }
 
