@@ -221,7 +221,7 @@ public class GameBoard {
         if (toCheck.endPiece.x == boardSize - 1 && board[toCheck.startPiece.x - 1][toCheck.startPiece.y] == 0)
             return true;
         //*********internal to board case**********
-        if (toCheck.startPiece.x > 0 && toCheck.endPiece.x < boardSize-1 && board[toCheck.startPiece.x - 1][toCheck.startPiece.y] == 0 && board[toCheck.endPiece.x + 1][toCheck.endPiece.y] == 0)
+        if (toCheck.startPiece.x > 0 && toCheck.endPiece.x < boardSize-1 && board[toCheck.startPiece.x - 1][toCheck.startPiece.y] == 0 || board[toCheck.endPiece.x + 1][toCheck.endPiece.y] == 0)
             return true;
         //Case: capped
         return false;
@@ -236,7 +236,7 @@ public class GameBoard {
         //Case: ends on edge of Board
         if(toCheck.endPiece.y == boardSize-1 && board[toCheck.startPiece.x][toCheck.startPiece.y-1] == 0) return true;
         //*********internal to board case**********
-        if(toCheck.startPiece.x > 1 && toCheck.endPiece.x < boardSize-1&& board[toCheck.startPiece.x-1][toCheck.startPiece.y] == 0 && board[toCheck.endPiece.x+1][toCheck.endPiece.y] == 0) return false;
+        if(toCheck.startPiece.x > 1 && toCheck.endPiece.x < boardSize-1&& board[toCheck.startPiece.x-1][toCheck.startPiece.y] == 0 || board[toCheck.endPiece.x+1][toCheck.endPiece.y] == 0) return false;
         //Case: capped
         return false;
     }
@@ -250,7 +250,7 @@ public class GameBoard {
         //Case: ends on edge of Board
         if (toCheck.endPiece.x == toCheck.endPiece.y && toCheck.endPiece.x == boardSize - 1 && board[toCheck.endPiece.x - 1][toCheck.endPiece.y - 1] == 0) return true;
         //*********internal to board case**********
-        if (toCheck.startPiece.x >0 && toCheck.startPiece.y > 0 && toCheck.endPiece.x < boardSize -1 && toCheck.endPiece.y < boardSize-1 && board[toCheck.startPiece.x - 1][toCheck.startPiece.y - 1] == 0 && board[toCheck.endPiece.x + 1][toCheck.endPiece.y + 1] == 0) return true;
+        if (toCheck.startPiece.x >0 && toCheck.startPiece.y > 0 && toCheck.endPiece.x < boardSize -1 || toCheck.endPiece.y < boardSize-1 && board[toCheck.startPiece.x - 1][toCheck.startPiece.y - 1] == 0 && board[toCheck.endPiece.x + 1][toCheck.endPiece.y + 1] == 0) return true;
         //Case: capped
         return false;
     }
