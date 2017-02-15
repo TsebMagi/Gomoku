@@ -221,7 +221,7 @@ public class GameBoard {
             Coordinates diaEnd = new Coordinates(start.x-1, start.y+1);
             int diaLength = 2;
             //find end of chain
-            while (diaEnd.x-1 < boardSize && diaEnd.y+1 < boardSize && board[diaEnd.x - 1][diaEnd.y + 1] == playerNum) {
+            while (diaEnd.x-1 > -1 && diaEnd.y+1 < boardSize && board[diaEnd.x - 1][diaEnd.y + 1] == playerNum) {
                 ++diaLength;
                 --diaEnd.x;
                 ++diaEnd.y;

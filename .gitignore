@@ -46,3 +46,4 @@ captures/
 .externalNativeBuild
 
 /.gradle/
+/.idea/
