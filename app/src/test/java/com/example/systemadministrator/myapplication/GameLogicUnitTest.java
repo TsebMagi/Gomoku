@@ -108,6 +108,8 @@ public class GameLogicUnitTest {
 
     @Test
     public void twoHorizontalStreaks () {
+        //name based on assumption that x-coordinate applies to horizontal position,
+        //this assumption may not be consistent with the underlying implementation
         GameBoard board = new GameBoard(15);
         board.placePiece(1, 1, 1);
         board.placePiece(1, 2, 1);
