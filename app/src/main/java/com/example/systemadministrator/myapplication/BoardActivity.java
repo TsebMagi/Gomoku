@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+
 import com.example.systemadministrator.Gomoku.R;
 
 public class BoardActivity extends AppCompatActivity {
@@ -70,7 +71,10 @@ public class BoardActivity extends AppCompatActivity {
         tieStatus = (TextView) findViewById(R.id.tieStatus);
         updateGameStatus();
 
-        players[playerTurn-1].setHasChosen(false);
+        players[0].setHasChosen(false);
+        players[0].startNewTimer(p1Status);
+        players[1].startNewTimer(p2Status);
+        players[1].stopTimer();
 
     }
 
@@ -120,6 +124,10 @@ public class BoardActivity extends AppCompatActivity {
             players[0].setHasChosen(true);
             players[1].setHasChosen(false);
             playerTurn = 2;
+            if(!gameOverFlag) {
+                players[0].stopTimer();
+                players[1].restartTimer(p2Status);
+            }
             if (players[1] instanceof NetworkPlayer)
                 ((NetworkPlayer) players[1]).sendMove(xPos, yPos);
             else if (players[1] instanceof AIPlayer) {
@@ -133,6 +141,10 @@ public class BoardActivity extends AppCompatActivity {
             players[1].setHasChosen(true);
             players[0].setHasChosen(false);
             playerTurn = 1;
+            if(!gameOverFlag) {
+                players[1].stopTimer();
+                players[0].restartTimer(p1Status);
+            }
             if(players[0] instanceof NetworkPlayer)
                 ((NetworkPlayer) players[1]).sendMove(xPos, yPos);
             else if(players[0] instanceof AIPlayer){
@@ -166,6 +178,8 @@ public class BoardActivity extends AppCompatActivity {
         CharSequence text;
         if(result != 0){
             gameOverFlag = true;
+            players[0].stopTimer();
+            players[1].stopTimer();
             if(result == 1) {
                 text = "Player 1 wins!";
                 player1Wins++;
@@ -224,6 +238,9 @@ public class BoardActivity extends AppCompatActivity {
         Button menuButton =(Button)findViewById(R.id.menuButton);
         regameButton.setVisibility(View.INVISIBLE);
         menuButton.setVisibility(View.INVISIBLE);
+        players[0].startNewTimer(p1Status);
+        players[1].startNewTimer(p2Status);
+        players[1].stopTimer();
 
     }
 
@@ -232,7 +249,9 @@ public class BoardActivity extends AppCompatActivity {
         String p2Text = String.format("P2\n%d", player2Wins);
         String tieText = String.format("Tie\n%d", tieGames);
         p1Status.setText(p1Text);
+        players[0].updateText(p1Text);
         p2Status.setText(p2Text);
+        players[1].updateText(p2Text);
         tieStatus.setText(tieText);
     }
 
