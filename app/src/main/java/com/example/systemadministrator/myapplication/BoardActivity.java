@@ -33,7 +33,9 @@ public class BoardActivity extends AppCompatActivity {
     private int player1Wins;
     private int player2Wins;
     private int tieGames;
-    TextView gameStatus;
+    TextView p1Status;
+    TextView p2Status;
+    TextView tieStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +65,9 @@ public class BoardActivity extends AppCompatActivity {
         player1Wins = 0;
         player2Wins = 0;
         tieGames = 0;
-        gameStatus = (TextView) findViewById(R.id.gameStatus);
+        p1Status = (TextView) findViewById(R.id.p1Status);
+        p2Status = (TextView) findViewById(R.id.p2Status);
+        tieStatus = (TextView) findViewById(R.id.tieStatus);
         updateGameStatus();
 
         players[playerTurn-1].setHasChosen(false);
@@ -224,8 +228,12 @@ public class BoardActivity extends AppCompatActivity {
     }
 
     private void updateGameStatus(){
-        String text = String.format("P1: %d   P2: %d    Tie: %d", player1Wins, player2Wins, tieGames);
-        gameStatus.setText(text);
+        String p1Text = String.format("P1\n %d", player1Wins);
+        String p2Text = String.format("P2\n%d", player2Wins);
+        String tieText = String.format("Tie\n%d", tieGames);
+        p1Status.setText(p1Text);
+        p2Status.setText(p2Text);
+        tieStatus.setText(tieText);
     }
 
 
