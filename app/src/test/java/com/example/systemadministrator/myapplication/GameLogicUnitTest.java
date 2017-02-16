@@ -105,4 +105,50 @@ public class GameLogicUnitTest {
         }
         assertEquals(board.gameOver(), 0);
     }
+
+    @Test
+    public void twoHorizontalStreaks () {
+        //name based on assumption that x-coordinate applies to horizontal position,
+        //this assumption may not be consistent with the underlying implementation
+        GameBoard board = new GameBoard(15);
+        board.placePiece(1, 1, 1);
+        board.placePiece(1, 2, 1);
+        for(int i = 4; i < 9; i++){
+            board.placePiece(1, i, 1);
+        }
+        assertEquals(board.gameOver(), 1);
+    }
+
+    @Test
+    public void twoVerticalStreaks () {
+        GameBoard board = new GameBoard(15);
+        board.placePiece(1, 1, 1);
+        board.placePiece(1, 1, 2);
+        for(int i = 4; i < 9; i++){
+            board.placePiece(1, 1, i);
+        }
+        assertEquals(board.gameOver(), 1);
+    }
+
+    @Test
+    public void twoDiagonalStreaks () {
+        GameBoard board = new GameBoard(15);
+        board.placePiece(1, 1, 1);
+        board.placePiece(1, 2, 2);
+        for(int i = 4; i < 9; i++){
+            board.placePiece(1, i, i);
+        }
+        assertEquals(board.gameOver(), 1);
+    }
+
+    @Test
+    public void twoUpwardDiagonalStreaks () {
+        GameBoard board = new GameBoard(15);
+        board.placePiece(1, 1, 9);
+        board.placePiece(1, 2, 8);
+        for(int i = 4; i < 9; i++){
+            board.placePiece(1, i, 9-i);
+        }
+        assertEquals(board.gameOver(), 1);
+    }
 }
