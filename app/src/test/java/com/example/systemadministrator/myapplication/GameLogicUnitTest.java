@@ -140,4 +140,15 @@ public class GameLogicUnitTest {
         }
         assertEquals(board.gameOver(), 1);
     }
+
+    @Test
+    public void twoUpwardDiagonalStreaks () {
+        GameBoard board = new GameBoard(15);
+        board.placePiece(1, 1, 9);
+        board.placePiece(1, 2, 8);
+        for(int i = 4; i < 9; i++){
+            board.placePiece(1, i, 9-i);
+        }
+        assertEquals(board.gameOver(), 1);
+    }
 }
