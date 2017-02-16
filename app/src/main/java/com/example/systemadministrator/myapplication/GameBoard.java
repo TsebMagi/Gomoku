@@ -121,7 +121,6 @@ public class GameBoard {
 
         //Vertical streak case
         StreakObj verStreak = verticalStreak(localPlayer,currentLocation);
-
         //Check for capping
         if (verStreak != null && verticalUncapped(verStreak))
             localStreaks[localPlayer - 1].add(verStreak);
@@ -259,7 +258,7 @@ public class GameBoard {
         //Case: ends on edge of Board
         if(toCheck.endPiece.y == boardSize-1 && board[toCheck.startPiece.x][toCheck.startPiece.y-1] == 0 && toCheck.startPiece.x==toCheck.endPiece.x) return true;
         //*********internal to board case**********
-        if(toCheck.startPiece.x == toCheck.endPiece.x && toCheck.startPiece.y>0 && toCheck.endPiece.y < boardSize -1 &&  (board[toCheck.startPiece.x][toCheck.startPiece.y-1] == 0 || board[toCheck.endPiece.x][toCheck.endPiece.y+1] == 0)) return false;
+        if(toCheck.startPiece.x == toCheck.endPiece.x && toCheck.startPiece.y>0 && toCheck.endPiece.y < boardSize -1 &&  (board[toCheck.startPiece.x][toCheck.startPiece.y-1] == 0 || board[toCheck.endPiece.x][toCheck.endPiece.y+1] == 0)) return true;
         //Case: capped
         return false;
     }
