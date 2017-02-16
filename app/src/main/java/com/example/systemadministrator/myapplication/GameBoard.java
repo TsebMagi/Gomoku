@@ -127,9 +127,13 @@ public class GameBoard {
             localStreaks[localPlayer - 1].add(verStreak);
 
         //Diagonal streak case
-        StreakObj diaStreak = diagonalStreak(localPlayer,currentLocation);
-        if (diaStreak != null && diagonalUncapped(diaStreak))
-            localStreaks[localPlayer - 1].add(diaStreak);
+        StreakObj diaDownStreak = diagonalDownStreak(localPlayer,currentLocation);
+        if (diaDownStreak != null && diagonalDownUncapped(diaDownStreak))
+            localStreaks[localPlayer - 1].add(diaDownStreak);
+
+        StreakObj diaUpStreak = diagonalUpStreak(localPlayer,currentLocation);
+        if (diaUpStreak != null && diagonalUpUncapped(diaUpStreak))
+            localStreaks[localPlayer-1].add(diaUpStreak);
 
         ArrayList<StreakObj>[] ret = new ArrayList[2];
         ret[0] = new ArrayList<StreakObj>();
@@ -193,7 +197,7 @@ public class GameBoard {
         return null;
     }
 
-    private StreakObj diagonalStreak(int playerNum, Coordinates start) {
+    private StreakObj diagonalDownStreak(int playerNum, Coordinates start) {
         if (playerNum == 0)
             return null;
 
@@ -204,6 +208,24 @@ public class GameBoard {
             while (diaEnd.x+1 < boardSize && diaEnd.y+1 < boardSize && board[diaEnd.x + 1][diaEnd.y + 1] == playerNum) {
                 ++diaLength;
                 ++diaEnd.x;
+                ++diaEnd.y;
+            }
+            return new StreakObj(start,diaEnd,diaLength,playerNum);
+        }
+        return null;
+    }
+
+    private StreakObj diagonalUpStreak(int playerNum, Coordinates start) {
+        if (playerNum == 0)
+            return null;
+
+        if (start.x-1 > -1 && start.y+1 < boardSize && board[start.x - 1][start.y + 1] == playerNum) {
+            Coordinates diaEnd = new Coordinates(start.x-1, start.y+1);
+            int diaLength = 2;
+            //find end of chain
+            while (diaEnd.x-1 > -1 && diaEnd.y+1 < boardSize && board[diaEnd.x - 1][diaEnd.y + 1] == playerNum) {
+                ++diaLength;
+                --diaEnd.x;
                 ++diaEnd.y;
             }
             return new StreakObj(start,diaEnd,diaLength,playerNum);
@@ -223,7 +245,7 @@ public class GameBoard {
         if (toCheck.endPiece.x == boardSize - 1 && board[toCheck.startPiece.x - 1][toCheck.startPiece.y] == 0)
             return true;
         //*********internal to board case**********
-        if (toCheck.startPiece.x > 0 && toCheck.endPiece.x < boardSize-1 && board[toCheck.startPiece.x - 1][toCheck.startPiece.y] == 0 && board[toCheck.endPiece.x + 1][toCheck.endPiece.y] == 0)
+        if (toCheck.startPiece.x > 0 && toCheck.endPiece.x < boardSize-1 && (board[toCheck.startPiece.x - 1][toCheck.startPiece.y] == 0 || board[toCheck.endPiece.x + 1][toCheck.endPiece.y] == 0))
             return true;
         //Case: capped
         return false;
@@ -238,12 +260,12 @@ public class GameBoard {
         //Case: ends on edge of Board
         if(toCheck.endPiece.y == boardSize-1 && board[toCheck.startPiece.x][toCheck.startPiece.y-1] == 0) return true;
         //*********internal to board case**********
-        if(toCheck.startPiece.x > 1 && toCheck.endPiece.x < boardSize-1&& board[toCheck.startPiece.x-1][toCheck.startPiece.y] == 0 && board[toCheck.endPiece.x+1][toCheck.endPiece.y] == 0) return false;
+        if(toCheck.startPiece.x > 1 && toCheck.endPiece.x < boardSize-1&& (board[toCheck.startPiece.x-1][toCheck.startPiece.y] == 0 || board[toCheck.endPiece.x+1][toCheck.endPiece.y] == 0)) return false;
         //Case: capped
         return false;
     }
 
-    private boolean diagonalUncapped(StreakObj toCheck) {
+    private boolean diagonalDownUncapped(StreakObj toCheck) {
         //***********edge of board cases***********
         //Case: runs length of board
         if ((toCheck.startPiece.x == 0 || toCheck.startPiece.y == 0) && (toCheck.endPiece.x == boardSize - 1)|| toCheck.endPiece.y == boardSize-1) return true;
@@ -252,7 +274,21 @@ public class GameBoard {
         //Case: ends on edge of Board
         if (toCheck.endPiece.x == toCheck.endPiece.y && toCheck.endPiece.x == boardSize - 1 && board[toCheck.endPiece.x - 1][toCheck.endPiece.y - 1] == 0) return true;
         //*********internal to board case**********
-        if (toCheck.startPiece.x >0 && toCheck.startPiece.y > 0 && toCheck.endPiece.x < boardSize -1 && toCheck.endPiece.y < boardSize-1 && board[toCheck.startPiece.x - 1][toCheck.startPiece.y - 1] == 0 && board[toCheck.endPiece.x + 1][toCheck.endPiece.y + 1] == 0) return true;
+        if (toCheck.startPiece.x >0 && toCheck.startPiece.y > 0 && toCheck.endPiece.x < boardSize -1 && toCheck.endPiece.y < boardSize-1 && (board[toCheck.startPiece.x - 1][toCheck.startPiece.y - 1] == 0 || board[toCheck.endPiece.x + 1][toCheck.endPiece.y + 1] == 0)) return true;
+        //Case: capped
+        return false;
+    }
+
+    private boolean diagonalUpUncapped(StreakObj toCheck) {
+        //***********edge of board cases***********
+        //Case: runs length of board
+        if ((toCheck.startPiece.x == boardSize-1 || toCheck.startPiece.y == 0) && (toCheck.endPiece.x == 0)|| toCheck.endPiece.y == boardSize-1) return true;
+        //Case: starts at edge of board
+        if (toCheck.startPiece.y == 0 && toCheck.endPiece.y < boardSize-1 && toCheck.endPiece.x > 0 &&board [toCheck.endPiece.x - 1][toCheck.endPiece.y + 1] == 0) return true;
+        //Case: ends on edge of Board
+        if (toCheck.endPiece.x == 0 && toCheck.startPiece.y>0 && toCheck.startPiece.x < boardSize-1 && board[toCheck.startPiece.x +1 ][toCheck.startPiece.y - 1] == 0) return true;
+        //*********internal to board case**********
+        if (toCheck.startPiece.x >0 && toCheck.startPiece.y > 0 && toCheck.endPiece.x < boardSize -1 && toCheck.endPiece.y < boardSize-1 && (board[toCheck.startPiece.x - 1][toCheck.startPiece.y + 1] == 0 || board[toCheck.endPiece.x + 1][toCheck.endPiece.y + 1] == 0)) return true;
         //Case: capped
         return false;
     }
