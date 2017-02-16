@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -28,6 +29,11 @@ public class BoardActivity extends AppCompatActivity {
     private Drawable[] drawCell = new Drawable[3]; //0 is empty, 1 or 2 for different player pieces
     private int xPos, yPos; // x and y position of move
     private int playerTurn; // which players turn it is
+    private boolean gameOverFlag;
+    private int player1Wins;
+    private int player2Wins;
+    private int tieGames;
+    TextView gameStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +52,19 @@ public class BoardActivity extends AppCompatActivity {
 
         piecesOnBoard = new GameBoard(dimension);
         boardArray = new ImageView[dimension][dimension];
+        gameOverFlag = false;
 
         context = this;
         playerTurn = 1;
 
         loadDrawables();
         createBoard();
+
+        player1Wins = 0;
+        player2Wins = 0;
+        tieGames = 0;
+        gameStatus = (TextView) findViewById(R.id.gameStatus);
+        updateGameStatus();
 
         players[playerTurn-1].setHasChosen(false);
 
@@ -81,7 +94,7 @@ public class BoardActivity extends AppCompatActivity {
                 boardArray[i][j].setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (!players[playerTurn-1].hasChosen() && players[playerTurn-1] instanceof HumanPlayer && piecesOnBoard.getPieceAtXY(x,y) == 0) { // make sure cell is empty
+                        if (!gameOverFlag && !players[playerTurn-1].hasChosen() && players[playerTurn-1] instanceof HumanPlayer && piecesOnBoard.getPieceAtXY(x,y) == 0) { // make sure cell is empty
                             xPos = x;
                             yPos = y; //when a location is clicked it sets global x,y variables to be accessed in other functions
                             makeMove();
@@ -148,12 +161,20 @@ public class BoardActivity extends AppCompatActivity {
         int result = piecesOnBoard.gameOver();
         CharSequence text;
         if(result != 0){
-            if(result == 1)
+            gameOverFlag = true;
+            if(result == 1) {
                 text = "Player 1 wins!";
-            else if(result == 2)
+                player1Wins++;
+            }
+            else if(result == 2) {
                 text = "Player 2 wins!";
-            else
+                player2Wins++;
+            }
+            else {
                 text = "Tie Game! Nobody wins";
+                tieGames++;
+            }
+            updateGameStatus();
             Context context = getApplicationContext();
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, text, duration);
@@ -194,11 +215,17 @@ public class BoardActivity extends AppCompatActivity {
         }
         playerTurn = 1;
         players[playerTurn-1].setHasChosen(false);
+        gameOverFlag = false;
         Button regameButton =(Button)findViewById(R.id.regameButton);
         Button menuButton =(Button)findViewById(R.id.menuButton);
         regameButton.setVisibility(View.INVISIBLE);
         menuButton.setVisibility(View.INVISIBLE);
 
+    }
+
+    private void updateGameStatus(){
+        String text = String.format("P1: %d   P2: %d    Tie: %d", player1Wins, player2Wins, tieGames);
+        gameStatus.setText(text);
     }
 
 
