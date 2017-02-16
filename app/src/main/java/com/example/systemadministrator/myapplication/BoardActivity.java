@@ -1,12 +1,14 @@
 package com.example.systemadministrator.myapplication;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -156,6 +158,7 @@ public class BoardActivity extends AppCompatActivity {
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
+            afterGame();
         }
     }
 
@@ -163,6 +166,39 @@ public class BoardActivity extends AppCompatActivity {
         Resources resources = context.getResources();
         DisplayMetrics dm = resources.getDisplayMetrics();
         return dm.widthPixels-100; //50 pixels of padding on each side
+    }
+
+    //after the game is over, make the buttons appear.
+    private void afterGame() {
+        Button regameButton =(Button)findViewById(R.id.regameButton);
+        Button menuButton =(Button)findViewById(R.id.menuButton);
+        regameButton.setVisibility(View.VISIBLE);
+        menuButton.setVisibility(View.VISIBLE);
+
+    }
+
+    //sends a the user back to the main menu when clicking menuButton
+    public void onMenuClick(View v) {
+        Intent intent = new Intent(BoardActivity.this, MainActivity.class);
+        startActivity(intent);
+
+    }
+
+    //regame sets the array to 0, the loop clears the board ui.
+    public void onReGameClick(View v) {
+        piecesOnBoard.reGame();
+        for(int i = 0; i < dimension; i++) {
+            for(int j = 0; j < dimension; j++) {
+                boardArray[i][j].setImageDrawable(drawCell[0]);
+            }
+        }
+        playerTurn = 1;
+        players[playerTurn-1].setHasChosen(false);
+        Button regameButton =(Button)findViewById(R.id.regameButton);
+        Button menuButton =(Button)findViewById(R.id.menuButton);
+        regameButton.setVisibility(View.INVISIBLE);
+        menuButton.setVisibility(View.INVISIBLE);
+
     }
 
 

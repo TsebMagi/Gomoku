@@ -329,4 +329,11 @@ public class GameBoard {
         return ret;
     }
 
+    //just resets the board.
+    public void reGame() {
+        for(int i = 0; i < boardSize; i++)
+            for(int j = 0; j < boardSize; j++)
+                board[i][j] = 0;
+    }
+
 }
