@@ -72,11 +72,7 @@ public class BoardActivity extends AppCompatActivity {
         updateGameStatus();
 
         players[0].setHasChosen(false);
-        players[0].startTimer(p1Status, true);
-        if(!(players[1] instanceof AIPlayer)) {
-            players[1].startTimer(p2Status, true);
-            players[1].stopTimer();
-        }
+        startTimers();
 
     }
 
@@ -121,6 +117,8 @@ public class BoardActivity extends AppCompatActivity {
         boardArray[xPos][yPos].setImageDrawable(drawCell[playerTurn]); //put players piece on space chosen
         piecesOnBoard.placePiece(playerTurn, xPos, yPos); //keep track of board in 2d array data structure
         checkGameOver();
+        players[0].checkExpired();
+        players[1].checkExpired();
 
         if (playerTurn == 1 && players[0].hasChosen == false) {
             players[0].setHasChosen(true);
@@ -162,6 +160,15 @@ public class BoardActivity extends AppCompatActivity {
                 players[0].stopTimer();
                 players[1].startTimer(p2Status, false);
             }
+        }
+    }
+
+    private void startTimers(){
+
+        players[0].startTimer(p1Status, true);
+        if(!(players[1] instanceof AIPlayer)) {
+            players[1].startTimer(p2Status, true);
+            players[1].stopTimer();
         }
     }
 
@@ -247,15 +254,9 @@ public class BoardActivity extends AppCompatActivity {
         Button menuButton =(Button)findViewById(R.id.menuButton);
         regameButton.setVisibility(View.INVISIBLE);
         menuButton.setVisibility(View.INVISIBLE);
-        players[0].startTimer(p1Status, true);
-        if(!(players[1] instanceof AIPlayer)) {
-            players[1].startTimer(p2Status, true);
-            players[1].stopTimer();
-        }
+        startTimers();
 
     }
-
-    //
 
     private void updateGameStatus(){
         String p1Text = String.format("P1\n %d", player1Wins);
