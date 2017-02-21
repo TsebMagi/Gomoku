@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
+import android.util.Log;
 
 import com.example.systemadministrator.Gomoku.R;
 
@@ -72,9 +72,11 @@ public class BoardActivity extends AppCompatActivity {
         updateGameStatus();
 
         players[0].setHasChosen(false);
-        players[0].startNewTimer(p1Status);
-        players[1].startNewTimer(p2Status);
-        players[1].stopTimer();
+        players[0].startTimer(p1Status, true);
+        if(!(players[1] instanceof AIPlayer)) {
+            players[1].startTimer(p2Status, true);
+            players[1].stopTimer();
+        }
 
     }
 
@@ -124,10 +126,7 @@ public class BoardActivity extends AppCompatActivity {
             players[0].setHasChosen(true);
             players[1].setHasChosen(false);
             playerTurn = 2;
-            if(!gameOverFlag) {
-                players[0].stopTimer();
-                players[1].restartTimer(p2Status);
-            }
+            switchTimers(1);
             if (players[1] instanceof NetworkPlayer)
                 ((NetworkPlayer) players[1]).sendMove(xPos, yPos);
             else if (players[1] instanceof AIPlayer) {
@@ -141,10 +140,7 @@ public class BoardActivity extends AppCompatActivity {
             players[1].setHasChosen(true);
             players[0].setHasChosen(false);
             playerTurn = 1;
-            if(!gameOverFlag) {
-                players[1].stopTimer();
-                players[0].restartTimer(p1Status);
-            }
+            switchTimers(0);
             if(players[0] instanceof NetworkPlayer)
                 ((NetworkPlayer) players[1]).sendMove(xPos, yPos);
             else if(players[0] instanceof AIPlayer){
@@ -152,6 +148,19 @@ public class BoardActivity extends AppCompatActivity {
                 while(piecesOnBoard.getPieceAtXY(move.x, move.y) != 0)
                     move = ((AIPlayer) players[1]).generateMove(piecesOnBoard);
                 makeMove(move);
+            }
+        }
+    }
+
+    private void switchTimers(int nextPlayer){
+        if(!gameOverFlag && !(players[1] instanceof AIPlayer)){
+            if(nextPlayer == 0){
+                players[1].stopTimer();
+                players[0].startTimer(p1Status, false);
+            }
+            else{
+                players[0].stopTimer();
+                players[1].startTimer(p2Status, false);
             }
         }
     }
@@ -238,11 +247,15 @@ public class BoardActivity extends AppCompatActivity {
         Button menuButton =(Button)findViewById(R.id.menuButton);
         regameButton.setVisibility(View.INVISIBLE);
         menuButton.setVisibility(View.INVISIBLE);
-        players[0].startNewTimer(p1Status);
-        players[1].startNewTimer(p2Status);
-        players[1].stopTimer();
+        players[0].startTimer(p1Status, true);
+        if(!(players[1] instanceof AIPlayer)) {
+            players[1].startTimer(p2Status, true);
+            players[1].stopTimer();
+        }
 
     }
+
+    //
 
     private void updateGameStatus(){
         String p1Text = String.format("P1\n %d", player1Wins);

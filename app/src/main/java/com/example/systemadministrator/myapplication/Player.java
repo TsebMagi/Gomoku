@@ -14,17 +14,13 @@ abstract public class Player {
     protected int timeRemaining;
     protected  boolean timeExpired;
     protected String originalText;
+    final int LONG_TIME = 600;
+    final int SHORT_TIME = 60;
 
     public Player(){
         timeExpired = false;
         this.hasChosen = true; // by default cannot make move
         this.originalText = "";
-    }
-
-    public Player(TextView text){
-        timeExpired = false;
-        this.hasChosen = true; // by default cannot make move
-        this.originalText = text.getText().toString();
     }
 
     public boolean hasChosen(){
@@ -43,10 +39,12 @@ abstract public class Player {
         this.timeRemaining = timeRemaining*1000;
     }
 
-    public void startNewTimer(final TextView text){
-        String originalTime = originalText + "\n" + "10:00";
-        text.setText(originalTime);
-        timeRemaining = 600000;
+    public void startTimer(final TextView text, boolean newTime){
+        if(newTime) {
+            String originalTime = originalText + "\n" + "10:00";
+            text.setText(originalTime);
+            timeRemaining = LONG_TIME*1000;
+        }
 
         turnTime = new CountDownTimer(timeRemaining, 1000) { // adjust the milli seconds here
 
@@ -67,23 +65,5 @@ abstract public class Player {
 
     public void stopTimer(){
         turnTime.cancel();
-    }
-
-    public void restartTimer(final TextView text){
-        turnTime = new CountDownTimer(timeRemaining, 1000) { // adjust the milli seconds here
-
-            public void onTick(long millisUntilFinished) {
-                int allSeconds = (int) millisUntilFinished / 1000;
-                timeRemaining = allSeconds*1000;
-                int min = allSeconds /60;
-                int sec = allSeconds % 60;
-                String newTime = originalText + "\n" + Integer.toString(min) + ":" + Integer.toString(sec);
-                text.setText(newTime);
-            }
-
-            public void onFinish() {
-                timeExpired = true;
-            }
-        }.start();
     }
 }
