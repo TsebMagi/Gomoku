@@ -15,7 +15,7 @@ abstract public class Player {
     protected  boolean longTimeExpired;
     protected boolean shortTimeExpired;
     protected String originalText;
-    final int LONG_TIME = 600;
+    final int LONG_TIME = 600; //This should be divisible by 60 or else initial formatting will be incorrect
     final int SHORT_TIME = 60;
 
     public Player(){
@@ -29,9 +29,8 @@ abstract public class Player {
         return hasChosen;
     }
 
-    public void checkExpired(){
-        if(shortTimeExpired)
-            Log.d("NOTICE", "Game Over");
+    public boolean checkExpired(){
+        return shortTimeExpired;
     }
 
     public void setHasChosen(boolean newBool){
@@ -81,5 +80,10 @@ abstract public class Player {
 
     public void stopTimer(){
         turnTime.cancel();
+    }
+
+    public void resetTimers(){
+        longTimeExpired = false;
+        shortTimeExpired = false;
     }
 }

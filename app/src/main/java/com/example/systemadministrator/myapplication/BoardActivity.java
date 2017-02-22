@@ -13,7 +13,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-import android.util.Log;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.example.systemadministrator.Gomoku.R;
 
@@ -73,6 +74,9 @@ public class BoardActivity extends AppCompatActivity {
 
         players[0].setHasChosen(false);
         startTimers();
+
+        Timer timer = new Timer();
+        timer.schedule(new checkGameOver(), 0, 1000);
 
     }
 
@@ -189,6 +193,19 @@ public class BoardActivity extends AppCompatActivity {
         }
     }
 
+    class checkGameOver extends TimerTask {
+        public void run() {
+            runOnUiThread(new Runnable() {
+                public void run () {
+                    if(! gameOverFlag) {
+                        gameOverFlag = players[0].checkExpired() || players[1].checkExpired();
+                        checkGameOver();
+                    }
+                }
+            });
+        }
+    }
+
     private void checkGameOver(){
         int result = piecesOnBoard.gameOver();
         CharSequence text;
@@ -207,6 +224,24 @@ public class BoardActivity extends AppCompatActivity {
             else {
                 text = "Tie Game! Nobody wins";
                 tieGames++;
+            }
+            updateGameStatus();
+            Context context = getApplicationContext();
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+            afterGame();
+        }
+        else if(gameOverFlag){
+            if(players[0].checkExpired()) {
+                players[1].stopTimer();
+                text = "Player 2 wins!";
+                player2Wins++;
+            }
+            else {
+                players[0].stopTimer();
+                text = "Player 1 wins!";
+                player1Wins++;
             }
             updateGameStatus();
             Context context = getApplicationContext();
@@ -254,6 +289,8 @@ public class BoardActivity extends AppCompatActivity {
         Button menuButton =(Button)findViewById(R.id.menuButton);
         regameButton.setVisibility(View.INVISIBLE);
         menuButton.setVisibility(View.INVISIBLE);
+        players[0].resetTimers();
+        players[1].resetTimers();
         startTimers();
 
     }
