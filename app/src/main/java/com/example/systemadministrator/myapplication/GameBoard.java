@@ -62,10 +62,15 @@ public class GameBoard {
             return 3;
         return 0;
     }
-
-    //TODO FIXME write algorithm for longest streak
-    public StreakObj getLongestStreak(){
-        return new StreakObj(new Coordinates(0,0), new Coordinates(0,0), 0, 0);
+    
+    public StreakObj getLongestStreak(int playerNumber){
+        StreakObj ret = playerStreaks[playerNumber-1].get(0);
+        int length = 0;
+        for (StreakObj i : playerStreaks[playerNumber-1]){
+            if (i.length > length)
+                ret = i;
+        }
+        return ret;
     }
 
     public boolean tieGame (){
@@ -93,31 +98,38 @@ public class GameBoard {
         //setup single streak and add to ret
         Coordinates start = new Coordinates(xCoordinate,yCoordinate);
         Coordinates end = new Coordinates(xCoordinate,yCoordinate);
-        StreakObj single = new StreakObj(start,end,1,playerNumber);
+        StreakObj single = new StreakObj(start,end,1,playerNumber,StreakType.HORIZONTAL);
         ret.add(single);
 
         //build other streaks
         StreakObj horizon = buildHorizontalStreak(playerNumber,xCoordinate,yCoordinate);
         if (horizon != null && horizon.length>1)
-            if (horizontalUncapped(horizon))
+            if (horizontalUncapped(horizon)) {
+
                 ret.add(horizon);
+            }
+
         StreakObj vertical = buildVerticalStreak(playerNumber,xCoordinate,yCoordinate);
         if (vertical != null && vertical.length>1)
-            if (verticalUncapped(vertical))
+            if (verticalUncapped(vertical)) {
                 ret.add(vertical);
+            }
+
         StreakObj diagonalUp = buildDiagonalUpStreak(playerNumber,xCoordinate,yCoordinate);
         if(diagonalUp != null && diagonalUp.length>1)
-            if (diagonalUpUncapped(diagonalUp))
+            if (diagonalUpUncapped(diagonalUp)) {
                 ret.add(diagonalUp);
+            }
+
         StreakObj diagonalDown = buildDiagonalDownStreak(playerNumber,xCoordinate,yCoordinate);
         if(diagonalDown != null && diagonalDown.length>1)
-            if (diagonalDownUncapped(diagonalDown))
+            if (diagonalDownUncapped(diagonalDown)) {
                 ret.add(diagonalDown);
+            }
 
         //return list
         return ret;
     }
-
     private StreakObj buildHorizontalStreak(int playerNumber, int xCoordinate, int yCoordinate){
         int xStart = xCoordinate;
         int xEnd = xCoordinate;
@@ -134,7 +146,7 @@ public class GameBoard {
         }
         Coordinates end = new Coordinates(xEnd,yCoordinate);
 
-        return new StreakObj(start,end,length,playerNumber);
+        return new StreakObj(start,end,length,playerNumber, StreakType.HORIZONTAL);
     }
 
     private StreakObj buildVerticalStreak(int playerNumber, int xCoordinate, int yCoordinate){
@@ -153,7 +165,7 @@ public class GameBoard {
         }
         Coordinates end = new Coordinates(xCoordinate,yEnd);
 
-        return new StreakObj(start,end,length,playerNumber);
+        return new StreakObj(start,end,length,playerNumber,StreakType.VERTICAL);
     }
 
     private StreakObj buildDiagonalDownStreak(int playerNumber, int xCoordinate, int yCoordinate){
@@ -176,7 +188,7 @@ public class GameBoard {
         }
         Coordinates end = new Coordinates(xEnd,yCoordinate);
 
-        return new StreakObj(start,end,length,playerNumber);
+        return new StreakObj(start,end,length,playerNumber, StreakType.DIAGONALDOWN);
     }
 
     private StreakObj buildDiagonalUpStreak(int playerNumber, int xCoordinate, int yCoordinate){
@@ -199,192 +211,9 @@ public class GameBoard {
         }
         Coordinates end = new Coordinates(xEnd,yCoordinate);
 
-        return new StreakObj(start,end,length,playerNumber);
+        return new StreakObj(start,end,length,playerNumber, StreakType.DIAGONALUP);
     }
 
-/* Old version of the streak builder
-    public ArrayList<StreakObj>[] gameState() {
-
-        //visited flags setup
-        int[][] visitedBoard = new int[boardSize][boardSize];
-        for (int i = 0; i < boardSize; ++i)
-            for (int j = 0; j < boardSize; ++j)
-                visitedBoard[i][j] = 0;
-
-        Coordinates start = new Coordinates(0,0);
-
-        return gameStateHelper(visitedBoard,start);
-    }
-
-    private ArrayList<StreakObj>[] gameStateHelper(int [][] visitedBoard, Coordinates currentLocation) {
-         //Base Case: Off the Board.
-        if (currentLocation.y >= boardSize || currentLocation.x >= boardSize) return null;
-
-        //Base Case: Already visited.
-        if (visitedBoard[currentLocation.x][currentLocation.y] == 1) return null;
-        else
-            visitedBoard[currentLocation.x][currentLocation.y] = 1;
-
-        //Initialize Return.
-        ArrayList<StreakObj>[] localStreaks = new ArrayList[2];
-        localStreaks[0] = new ArrayList<StreakObj>();
-        localStreaks[1] = new ArrayList<StreakObj>();
-
-        //Setup Comparison.
-        int localPlayer = board[currentLocation.x][currentLocation.y];
-
-        //Horizontal streak case and degenerate singleton case
-        StreakObj horStreak = horizontalStreak(localPlayer,currentLocation);
-
-        //Check for capping.
-        if (horStreak!= null && horizontalUncapped(horStreak))
-            localStreaks[localPlayer - 1].add(horStreak);
-
-        //Vertical streak case
-        StreakObj verStreak = verticalStreak(localPlayer,currentLocation);
-        //Check for capping
-        if (verStreak != null && verticalUncapped(verStreak))
-            localStreaks[localPlayer - 1].add(verStreak);
-
-        //Diagonal streak case
-        StreakObj diaDownStreak = diagonalDownStreak(localPlayer,currentLocation);
-        if (diaDownStreak != null && diagonalDownUncapped(diaDownStreak))
-            localStreaks[localPlayer - 1].add(diaDownStreak);
-
-        StreakObj diaUpStreak = diagonalUpStreak(localPlayer,currentLocation);
-        if (diaUpStreak != null && diagonalUpUncapped(diaUpStreak))
-            localStreaks[localPlayer-1].add(diaUpStreak);
-
-        ArrayList<StreakObj>[] ret = new ArrayList[2];
-        ret[0] = new ArrayList<StreakObj>();
-        ret[1] = new ArrayList<StreakObj>();
-
-        ArrayList<StreakObj>[] recursiveCallRight = gameStateHelper(visitedBoard,new Coordinates(currentLocation.x+1,currentLocation.y));
-        ArrayList<StreakObj>[] recursiveCallDown = gameStateHelper(visitedBoard,new Coordinates(currentLocation.x,currentLocation.y+1));
-        ArrayList<StreakObj>[] recursiveCallDiagonal = gameStateHelper(visitedBoard,new Coordinates(currentLocation.x+1,currentLocation.y+1));
-
-        ArrayList<StreakObj>[] comparisons = new ArrayList[2];
-        comparisons[0] = new ArrayList<>();
-        comparisons[1] = new ArrayList<>();
-
-        for(int i = 0; i < 2; ++i) {
-            if(recursiveCallRight!= null)
-                comparisons[i].addAll(recursiveCallRight[i]);
-            if (recursiveCallDown!=null)
-                comparisons[i].addAll(recursiveCallDown[i]);
-            if (recursiveCallDiagonal != null)
-                comparisons[i].addAll(recursiveCallDiagonal[i]);
-            ret[i].addAll(pruneRepeats(localStreaks[i],comparisons[i]));
-        }
-
-
-        return ret;
-    }
-
-    //builds horizontal streak from given starting point for player num
-    private StreakObj horizontalStreak(int playerNum,Coordinates start){
-        //called on blank board space
-        if (playerNum == 0)
-            return null;
-        //setup end point
-        Coordinates horEnd = new Coordinates(start.x, start.y);
-        int horLength = 1;
-        //find end of chain
-        while (horEnd.x+1 < boardSize && board[horEnd.x + 1][horEnd.y] == playerNum) {
-            ++horLength;
-            ++horEnd.x;
-        }
-        return new StreakObj(start,horEnd,horLength,playerNum);
-    }
-
-    //builds vertical streak, ignores case of single piece.
-    private StreakObj verticalStreak(int playerNum, Coordinates start) {
-        if (playerNum == 0)
-            return null;
-
-        if (start.y+1 < boardSize && board[start.x][start.y + 1] == playerNum) {
-            Coordinates verEnd = new Coordinates(start.x, start.y+1);
-            int verLength = 2;
-            //find end of chain
-            while (verEnd.y+1 < boardSize && board[verEnd.x][verEnd.y + 1] == playerNum) {
-                ++verLength;
-                ++verEnd.y;
-            }
-            return new StreakObj(start,verEnd,verLength,playerNum);
-        }
-        return null;
-    }
-
-    private StreakObj diagonalDownStreak(int playerNum, Coordinates start) {
-        if (playerNum == 0)
-            return null;
-
-        if (start.x+1 < boardSize && start.y+1 < boardSize && board[start.x + 1][start.y + 1] == playerNum) {
-            Coordinates diaEnd = new Coordinates(start.x+1, start.y+1);
-            int diaLength = 2;
-            //find end of chain
-            while (diaEnd.x+1 < boardSize && diaEnd.y+1 < boardSize && board[diaEnd.x + 1][diaEnd.y + 1] == playerNum) {
-                ++diaLength;
-                ++diaEnd.x;
-                ++diaEnd.y;
-            }
-            return new StreakObj(start,diaEnd,diaLength,playerNum);
-        }
-        return null;
-    }
-
-    private StreakObj diagonalUpStreak(int playerNum, Coordinates start) {
-        if (playerNum == 0)
-            return null;
-
-        if (start.x-1 > -1 && start.y+1 < boardSize && board[start.x - 1][start.y + 1] == playerNum) {
-            Coordinates diaEnd = new Coordinates(start.x-1, start.y+1);
-            int diaLength = 2;
-            //find end of chain
-            while (diaEnd.x-1 > -1 && diaEnd.y+1 < boardSize && board[diaEnd.x - 1][diaEnd.y + 1] == playerNum) {
-                ++diaLength;
-                --diaEnd.x;
-                ++diaEnd.y;
-            }
-            return new StreakObj(start,diaEnd,diaLength,playerNum);
-        }
-        return null;
-    }
-
-
-    private ArrayList<StreakObj> pruneRepeats(ArrayList<StreakObj> master, ArrayList<StreakObj> toCompare){
-        //comparisons
-        int masterLength = master.size();
-
-        //setup return
-        ArrayList<StreakObj> ret = new ArrayList<>();
-
-        //master contains at least 1 element
-        if(masterLength > 0) {
-            //add all of the base to the return
-            ret.addAll(master);
-            //setup loop structure
-            boolean add = true;
-            //compare each comparison to the master and add if it's not contained by one already there
-            for (StreakObj j : toCompare) {
-                for (StreakObj i : master) {
-                    if (i.contains(j)){
-                        add = false;
-                    }
-                }
-                if (add){
-                    ret.add(j);
-                    add = true;
-                }
-            }
-        }
-        //if there's nothing in the master just add the comparison list
-        else{
-            ret.addAll(toCompare);
-        }
-        return ret;
-    }
-*/
     private boolean horizontalUncapped(StreakObj toCheck) {
 
         //***********edge of board cases***********
