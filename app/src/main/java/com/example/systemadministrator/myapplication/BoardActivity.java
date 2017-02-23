@@ -47,6 +47,7 @@ public class BoardActivity extends AppCompatActivity {
         Bundle extras =  getIntent().getExtras();
         dimension = extras.getInt("Size");
         player2Type = extras.getString("Opponent");
+        style = extras.getChar("Style");
 
         players[0] = new HumanPlayer();
         if(player2Type.equals("Human"))
@@ -207,7 +208,7 @@ public class BoardActivity extends AppCompatActivity {
     }
 
     private void checkGameOver(){
-        int result = piecesOnBoard.gameOver();
+        int result = piecesOnBoard.gameOver(style);
         CharSequence text;
         if(result != 0){
             gameOverFlag = true;
