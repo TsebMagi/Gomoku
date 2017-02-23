@@ -25,14 +25,13 @@ public class StreakObj {
 
         //case vertical lines
         if (x1 == x2 && toCompare.startPiece.x == toCompare.endPiece.x && x1 == toCompare.startPiece.x) {
-            return toCompare.startPiece.y >= y1 && toCompare.endPiece.y <= y2;
+            return (toCompare.startPiece.y >= y1 && toCompare.endPiece.y <= y2);
         }
-
         //case Diagonal and Horizontal Lines
         //y = y1 + ((y2 - y1) / (x2 - x1)) * (x - x1)
-        if (x2 - x1 != 0 && toCompare.startPiece.y == y1 + ((y2 - y1) / (x2 - x1)) * (toCompare.startPiece.x - x1)) {
-            if (toCompare.endPiece.y == y1 + ((y2 - y1) / (x2 - x1)) * (toCompare.endPiece.x - x1))
-                return true;
+        if (x2 - x1 != 0 && toCompare.startPiece.y == (y1 + ((y2 - y1) / (x2 - x1)) * (toCompare.startPiece.x - x1))) {
+            if (toCompare.endPiece.y == (y1 + ((y2 - y1) / (x2 - x1)) * (toCompare.endPiece.x - x1)))
+                return ((toCompare.startPiece.y >= y1 && toCompare.endPiece.y <= y2) && (toCompare.startPiece.x >= x1 && toCompare.endPiece.x <= x2));
         }
         return false;
     }
