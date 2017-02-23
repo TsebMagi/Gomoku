@@ -15,7 +15,7 @@ abstract public class Player {
     protected  boolean longTimeExpired;
     protected boolean shortTimeExpired;
     protected String originalText;
-    final int LONG_TIME = 600; //This should be divisible by 60 or else initial formatting will be incorrect
+    final int LONG_TIME = 600;
     final int SHORT_TIME = 60;
 
     public Player(){
@@ -47,7 +47,8 @@ abstract public class Player {
 
     public void startTimer(final TextView text, boolean newTime){
         if(newTime) {
-            String originalTime = originalText + "\n" + Integer.toString(LONG_TIME/60) + ":00";
+            String secString = (LONG_TIME % 60 != 0) ? Integer.toString(LONG_TIME % 60) : "00";
+            String originalTime = originalText + "\n" + Integer.toString(LONG_TIME/60) + ":" + secString;
             text.setText(originalTime);
             timeRemaining = LONG_TIME*1000;
         }
