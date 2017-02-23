@@ -20,7 +20,7 @@ public class GameLogicUnitTest {
     public void emptyBoard () {
         //0 = game still going, 1 or 2 = player win, 3 = tie
         GameBoard board = new GameBoard(10);
-        assertEquals(board.gameOver(), 0);
+        assertEquals(board.gameOver('c'), 0);
     }
 
     @Test
@@ -31,7 +31,7 @@ public class GameLogicUnitTest {
         board.placePiece(1,3,3);
         board.placePiece(2,4,4);
         board.placePiece(1,5,5);
-        assertEquals(board.gameOver(), 0);
+        assertEquals(board.gameOver('c'), 0);
     }
 
     @Test
@@ -42,7 +42,7 @@ public class GameLogicUnitTest {
         board.placePiece(1,3,3);
         board.placePiece(1,4,4);
         board.placePiece(1,5,5);
-        assertEquals(board.gameOver(), 1);
+        assertEquals(board.gameOver('c'), 1);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class GameLogicUnitTest {
         board.placePiece(1,4,4);
         board.placePiece(1,5,5);
         board.placePiece(1,6,6);
-        assertEquals(board.gameOver(), 0);
+        assertEquals(board.gameOver('c'), 0);
     }
 
     @Test
@@ -71,7 +71,7 @@ public class GameLogicUnitTest {
         board.placePiece(2,5,4);
         board.placePiece(1,6,5);
         board.placePiece(2,5,5);
-        assertEquals(board.gameOver(), 2);
+        assertEquals(board.gameOver('c'), 2);
     }
 
     @Test
@@ -83,7 +83,7 @@ public class GameLogicUnitTest {
             }
         }
         assertEquals((7/2)%2,1);
-        assertEquals(board.gameOver(), 3);
+        assertEquals(board.gameOver('c'), 3);
     }
 
     @Test
@@ -93,7 +93,7 @@ public class GameLogicUnitTest {
         for(int i = 0; i < 5; i++){
             board.placePiece(1, i, 0);
         }
-        assertEquals(board.gameOver(), 0);
+        assertEquals(board.gameOver('c'), 0);
     }
 
     @Test
@@ -103,7 +103,7 @@ public class GameLogicUnitTest {
         for(int i = 10; i < 15; i++){
             board.placePiece(2, i, i);
         }
-        assertEquals(board.gameOver(), 0);
+        assertEquals(board.gameOver('c'), 0);
     }
 
     @Test
@@ -116,7 +116,7 @@ public class GameLogicUnitTest {
         for(int i = 4; i < 9; i++){
             board.placePiece(1, i, 1);
         }
-        assertEquals(board.gameOver(), 1);
+        assertEquals(board.gameOver('c'), 1);
     }
 
     @Test
@@ -127,7 +127,7 @@ public class GameLogicUnitTest {
         for(int i = 4; i < 9; i++){
             board.placePiece(1, 1, i);
         }
-        assertEquals(board.gameOver(), 1);
+        assertEquals(board.gameOver('c'), 1);
     }
 
     @Test
@@ -138,7 +138,7 @@ public class GameLogicUnitTest {
         for(int i = 4; i < 9; i++){
             board.placePiece(1, i, i);
         }
-        assertEquals(board.gameOver(), 1);
+        assertEquals(board.gameOver('c'), 1);
     }
 
     @Test
@@ -149,6 +149,47 @@ public class GameLogicUnitTest {
         for(int i = 4; i < 9; i++){
             board.placePiece(1, i, 9-i);
         }
-        assertEquals(board.gameOver(), 1);
+        assertEquals(board.gameOver('c'), 1);
+    }
+
+    @Test
+    public void compareStylesVertical () {
+        GameBoard board = new GameBoard(10);
+        board.placePiece(1,1,6);
+        for(int i = 1; i < 6; i++){
+            board.placePiece(1, 1, i);
+        }
+        assertEquals(board.gameOver('c'), 0);
+        assertEquals(board.gameOver('f'), 1);
+    }
+
+    public void compareStylesHorizontal () {
+        GameBoard board = new GameBoard(10);
+        board.placePiece(1,6,1);
+        for(int i = 1; i < 6; i++){
+            board.placePiece(1, i, 1);
+        }
+        assertEquals(board.gameOver('c'), 0);
+        assertEquals(board.gameOver('f'), 1);
+    }
+
+    public void compareStylesDownwardDiagonal () {
+        GameBoard board = new GameBoard(10);
+        board.placePiece(1,6,6);
+        for(int i = 1; i < 6; i++){
+            board.placePiece(1, i, i);
+        }
+        assertEquals(board.gameOver('c'), 0);
+        assertEquals(board.gameOver('f'), 1);
+    }
+
+    public void compareStylesUpwardDiagonal () {
+        GameBoard board = new GameBoard(10);
+        board.placePiece(1,1,6);
+        for(int i = 1; i < 6; i++){
+            board.placePiece(1, 7-i, i);
+        }
+        assertEquals(board.gameOver('c'), 0);
+        assertEquals(board.gameOver('f'), 1);
     }
 }
