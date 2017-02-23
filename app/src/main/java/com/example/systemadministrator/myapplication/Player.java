@@ -2,7 +2,7 @@ package com.example.systemadministrator.myapplication;
 
 import android.os.CountDownTimer;
 import android.widget.TextView;
-import android.util.Log;
+
 
 /**
  * Created by Doug Whitley on 1/29/2017.
@@ -17,12 +17,14 @@ abstract public class Player {
     protected String originalText;
     final int LONG_TIME = 600;
     final int SHORT_TIME = 60;
+    protected boolean goesFirst;
 
     public Player(){
         longTimeExpired = false;
         shortTimeExpired = false;
         this.hasChosen = true; // by default cannot make move
         this.originalText = "";
+        goesFirst = false;
     }
 
     public boolean hasChosen(){
@@ -86,5 +88,9 @@ abstract public class Player {
     public void resetTimers(){
         longTimeExpired = false;
         shortTimeExpired = false;
+    }
+
+    public boolean getGoesFirst(){
+        return goesFirst;
     }
 }

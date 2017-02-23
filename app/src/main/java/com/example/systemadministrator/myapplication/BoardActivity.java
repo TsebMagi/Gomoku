@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import java.util.Timer;
 import java.util.TimerTask;
+import android.util.Log;
 
 import com.example.systemadministrator.Gomoku.R;
 
@@ -35,6 +36,7 @@ public class BoardActivity extends AppCompatActivity {
     private int player1Wins;
     private int player2Wins;
     private int tieGames;
+    private int playerTurnLastRound;
     TextView p1Status;
     TextView p2Status;
     TextView tieStatus;
@@ -52,6 +54,8 @@ public class BoardActivity extends AppCompatActivity {
         players[0] = new HumanPlayer();
         if(player2Type.equals("Human"))
             players[1] = new HumanPlayer();
+        else if(player2Type.equals("Network"))
+            players[1] = new NetworkPlayer();
         else
             players[1] = new AIPlayer();
 
@@ -60,7 +64,15 @@ public class BoardActivity extends AppCompatActivity {
         gameOverFlag = false;
 
         context = this;
-        playerTurn = 1;
+
+        if(players[1].getGoesFirst())
+            playerTurn = 2;
+        else
+            playerTurn = 1;
+
+        playerTurnLastRound = playerTurn;
+
+        players[playerTurn-1].setHasChosen(false);
 
         loadDrawables();
         createBoard();
@@ -73,11 +85,13 @@ public class BoardActivity extends AppCompatActivity {
         tieStatus = (TextView) findViewById(R.id.tieStatus);
         updateGameStatus();
 
-        players[0].setHasChosen(false);
-        startTimers();
+        startTimers(playerTurn);
 
         Timer timer = new Timer();
         timer.schedule(new checkGameOver(), 0, 1000);
+
+        if(playerTurn == 2 && players[1] instanceof AIPlayer)
+            doAIMove();
 
     }
 
@@ -122,8 +136,6 @@ public class BoardActivity extends AppCompatActivity {
         boardArray[xPos][yPos].setImageDrawable(drawCell[playerTurn]); //put players piece on space chosen
         piecesOnBoard.placePiece(playerTurn, xPos, yPos); //keep track of board in 2d array data structure
         checkGameOver();
-        players[0].checkExpired();
-        players[1].checkExpired();
 
         if (playerTurn == 1 && players[0].hasChosen == false) {
             players[0].setHasChosen(true);
@@ -132,48 +144,59 @@ public class BoardActivity extends AppCompatActivity {
             switchTimers(1);
             if (players[1] instanceof NetworkPlayer)
                 ((NetworkPlayer) players[1]).sendMove(xPos, yPos);
-            else if (players[1] instanceof AIPlayer) {
-                Coordinates move = ((AIPlayer) players[1]).generateMove(piecesOnBoard);
-                while (piecesOnBoard.getPieceAtXY(move.x, move.y) != 0)
-                    move = ((AIPlayer) players[1]).generateMove(piecesOnBoard);
-                makeMove(move);
+            else if (players[1] instanceof AIPlayer && !gameOverFlag) {
+                doAIMove();
             }
         }
-        else if(players[1].hasChosen == false){
+        else if(playerTurn == 2 && players[1].hasChosen == false){
             players[1].setHasChosen(true);
             players[0].setHasChosen(false);
             playerTurn = 1;
             switchTimers(0);
             if(players[0] instanceof NetworkPlayer)
                 ((NetworkPlayer) players[1]).sendMove(xPos, yPos);
-            else if(players[0] instanceof AIPlayer){
-                Coordinates move = ((AIPlayer) players[1]).generateMove(piecesOnBoard);
-                while(piecesOnBoard.getPieceAtXY(move.x, move.y) != 0)
-                    move = ((AIPlayer) players[1]).generateMove(piecesOnBoard);
-                makeMove(move);
+            else if(players[0] instanceof AIPlayer && !gameOverFlag){
+                doAIMove();
             }
         }
     }
 
+    private void doAIMove(){
+        Coordinates move = ((AIPlayer) players[1]).generateMove(piecesOnBoard);
+        while(piecesOnBoard.getPieceAtXY(move.x, move.y) != 0)
+            move = ((AIPlayer) players[1]).generateMove(piecesOnBoard);
+        makeMove(move);
+        switchTimers(0);
+    }
+
     private void switchTimers(int nextPlayer){
-        if(!gameOverFlag && !(players[1] instanceof AIPlayer)){
+        if(!gameOverFlag){
             if(nextPlayer == 0){
-                players[1].stopTimer();
+                if(!(players[1] instanceof AIPlayer))
+                    players[1].stopTimer();
                 players[0].startTimer(p1Status, false);
             }
             else{
                 players[0].stopTimer();
-                players[1].startTimer(p2Status, false);
+                if(!(players[1] instanceof AIPlayer))
+                    players[1].startTimer(p2Status, false);
             }
         }
     }
 
-    private void startTimers(){
-
-        players[0].startTimer(p1Status, true);
-        if(!(players[1] instanceof AIPlayer)) {
-            players[1].startTimer(p2Status, true);
-            players[1].stopTimer();
+    private void startTimers(int firstPlayer){
+        if(firstPlayer == 1){
+            players[0].startTimer(p1Status, true);
+            if(!(players[1] instanceof AIPlayer)) {
+                players[1].startTimer(p2Status, true);
+                players[1].stopTimer();
+            }
+        }
+        else{
+            players[0].startTimer(p1Status, true);
+            players[0].stopTimer();
+            if(!(players[1] instanceof AIPlayer))
+                players[1].startTimer(p2Status, true);
         }
     }
 
@@ -210,10 +233,11 @@ public class BoardActivity extends AppCompatActivity {
     private void checkGameOver(){
         int result = piecesOnBoard.gameOver(style);
         CharSequence text;
-        if(result != 0){
+        if(result != 0 && !gameOverFlag){
             gameOverFlag = true;
             players[0].stopTimer();
-            players[1].stopTimer();
+            if(!(players[1] instanceof AIPlayer))
+                players[1].stopTimer();
             if(result == 1) {
                 text = "Player 1 wins!";
                 player1Wins++;
@@ -233,9 +257,10 @@ public class BoardActivity extends AppCompatActivity {
             toast.show();
             afterGame();
         }
-        else if(gameOverFlag){
+        else if(result == 0 && gameOverFlag){
             if(players[0].checkExpired()) {
-                players[1].stopTimer();
+                if(!(players[1] instanceof AIPlayer))
+                    players[1].stopTimer();
                 text = "Player 2 wins!";
                 player2Wins++;
             }
@@ -283,7 +308,13 @@ public class BoardActivity extends AppCompatActivity {
                 boardArray[i][j].setImageDrawable(drawCell[0]);
             }
         }
-        playerTurn = 1;
+        if(playerTurnLastRound == 1)
+            playerTurn = 2;
+        else
+            playerTurn = 1;
+
+        playerTurnLastRound = playerTurn;
+
         players[playerTurn-1].setHasChosen(false);
         gameOverFlag = false;
         Button regameButton =(Button)findViewById(R.id.regameButton);
@@ -292,8 +323,10 @@ public class BoardActivity extends AppCompatActivity {
         menuButton.setVisibility(View.INVISIBLE);
         players[0].resetTimers();
         players[1].resetTimers();
-        startTimers();
+        startTimers(playerTurn);
 
+        if(playerTurn == 2 && players[1] instanceof AIPlayer)
+            doAIMove();
     }
 
     private void updateGameStatus(){
@@ -306,6 +339,5 @@ public class BoardActivity extends AppCompatActivity {
         players[1].updateText(p2Text);
         tieStatus.setText(tieText);
     }
-
 
 }

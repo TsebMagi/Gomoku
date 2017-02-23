@@ -11,6 +11,7 @@ public class AIPlayer extends Player {
     public AIPlayer(){
         super();
         coor = 0;
+        goesFirst = false;
     }
 
     public Coordinates generateMove(GameBoard board){

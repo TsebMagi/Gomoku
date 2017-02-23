@@ -10,6 +10,7 @@ public class NetworkPlayer extends HumanPlayer {
     public NetworkPlayer(){
         super();
         this.nextMove = null;
+        setGoesFirst();
     }
 
     public void sendMove(int xPos, int yPos){
@@ -22,5 +23,9 @@ public class NetworkPlayer extends HumanPlayer {
 
     public void setNextMoveNull(){
         nextMove = null;
+    }
+
+    public void setGoesFirst(){
+        goesFirst = true;
     }
 }
