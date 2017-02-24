@@ -17,7 +17,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import android.util.Log;
 
-import com.example.systemadministrator.Gomoku.R;
+import com.example.systemadministrator.myapplication.R;
 
 public class BoardActivity extends AppCompatActivity {
 

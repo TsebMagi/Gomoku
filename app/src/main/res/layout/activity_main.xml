@@ -155,4 +155,33 @@
         android:layout_centerHorizontal="true"
         android:onClick="onPlayClick" />
 
+    <Button
+        android:text="Sign Out"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/signOutButton"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:onClick="onSignOutClick" />
+
+    <Button
+        android:text="Sign In"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/signInButton"
+        android:onClick="onSignInClick"
+        android:layout_above="@+id/signOutButton"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="21dp" />
+
+    <Button
+        android:text="CHECK?!"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/GameStyletext"
+        android:layout_alignEnd="@+id/signInButton"
+        android:layout_marginTop="13dp"
+        android:id="@+id/isSignedInButton"
+        android:onClick="onIsSignedInClick" />
+
 </RelativeLayout>

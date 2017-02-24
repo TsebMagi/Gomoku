@@ -12,6 +12,7 @@
     <string name="classic">Classic</string>
     <string name="freestyle">Freestyle</string>
     <string name="play">Play</string>
+    <string name="app_id">829607533789</string>
 
     <string name="title_activity_board">BoardActivity</string>
     <string name="dummy_button">Dummy Button</string>
