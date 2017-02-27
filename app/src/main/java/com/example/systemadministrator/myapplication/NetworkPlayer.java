@@ -6,6 +6,7 @@ package com.example.systemadministrator.myapplication;
 
 public class NetworkPlayer extends HumanPlayer {
     private Coordinates nextMove;
+    private BoardActivity arr;
 
     public NetworkPlayer(){
         super();
@@ -18,6 +19,8 @@ public class NetworkPlayer extends HumanPlayer {
     }
 
     public Coordinates getNextMove(){
+
+
         return nextMove;
     }
 
