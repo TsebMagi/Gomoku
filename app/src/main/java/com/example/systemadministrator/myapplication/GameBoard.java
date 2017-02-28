@@ -51,12 +51,12 @@ public class GameBoard {
     }
 
     //TODO FIXME write algorithm for gameOver
-    public int gameOver(){ // return 0 for still going, 1 or 2 for winning player number, or 3 for tie
+    public int gameOver(char style){ // return 0 for still going, 1 or 2 for winning player number, or 3 for tie
         for(StreakObj i : playerStreaks[0])
-            if (i.length == 5)
+            if ((style == 'c' && i.length == 5) || (style == 'f' && i.length >= 5))
                 return 1;
         for(StreakObj j : playerStreaks[1])
-            if (j.length == 5)
+            if ((style == 'c' && j.length == 5) || (style == 'f' && j.length >= 5))
                 return 2;
         if(tieGame())
             return 3;

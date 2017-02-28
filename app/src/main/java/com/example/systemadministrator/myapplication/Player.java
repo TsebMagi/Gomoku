@@ -2,7 +2,7 @@ package com.example.systemadministrator.myapplication;
 
 import android.os.CountDownTimer;
 import android.widget.TextView;
-import android.util.Log;
+
 
 /**
  * Created by Doug Whitley on 1/29/2017.
@@ -15,14 +15,16 @@ abstract public class Player {
     protected  boolean longTimeExpired;
     protected boolean shortTimeExpired;
     protected String originalText;
-    final int LONG_TIME = 600; //This should be divisible by 60 or else initial formatting will be incorrect
+    final int LONG_TIME = 600;
     final int SHORT_TIME = 60;
+    protected boolean goesFirst;
 
     public Player(){
         longTimeExpired = false;
         shortTimeExpired = false;
         this.hasChosen = true; // by default cannot make move
         this.originalText = "";
+        goesFirst = false;
     }
 
     public boolean hasChosen(){
@@ -47,7 +49,8 @@ abstract public class Player {
 
     public void startTimer(final TextView text, boolean newTime){
         if(newTime) {
-            String originalTime = originalText + "\n" + Integer.toString(LONG_TIME/60) + ":00";
+            String secString = (LONG_TIME % 60 != 0) ? Integer.toString(LONG_TIME % 60) : "00";
+            String originalTime = originalText + "\n" + Integer.toString(LONG_TIME/60) + ":" + secString;
             text.setText(originalTime);
             timeRemaining = LONG_TIME*1000;
         }
@@ -85,5 +88,9 @@ abstract public class Player {
     public void resetTimers(){
         longTimeExpired = false;
         shortTimeExpired = false;
+    }
+
+    public boolean getGoesFirst(){
+        return goesFirst;
     }
 }

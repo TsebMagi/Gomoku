@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, BoardActivity.class);
         Bundle boardVars = new Bundle();
         boardVars.putInt("Size", size);
+        boardVars.putChar("Style", style);
         if(players == 2)
             boardVars.putString("Opponent", "Human");
         else
