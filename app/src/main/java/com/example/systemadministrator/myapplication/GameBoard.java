@@ -68,6 +68,18 @@ public class GameBoard {
         int length = 0;
         for (StreakObj i : playerStreaks[playerNumber-1]){
             if (i.length > length)
+                length = i.length;
+                ret = i;
+        }
+        return ret;
+    }
+
+    public StreakObj getLongestWinnableStreak(int playerNumber){
+        StreakObj ret = playerStreaks[playerNumber-1].get(0);
+        int length = 0;
+        for (StreakObj i : playerStreaks[playerNumber-1]){
+            if (i.length > length && i.length < 4)
+                length = i.length;
                 ret = i;
         }
         return ret;
@@ -285,6 +297,25 @@ public class GameBoard {
                 board[i][j] = 0;
         playerStreaks[0] = new ArrayList<>();
         playerStreaks[1] = new ArrayList<>();
+    }
+
+    public ArrayList<Coordinates>  OpenSpaces() {
+        ArrayList<Coordinates> ret = new ArrayList<>();
+        for (int i = 0; i < this.boardSize; ++i) {
+            for (int j = 0; j < this.boardSize; ++j)
+                if (board[i][j] == 0)
+                    ret.add(new Coordinates(i, j));
+        }
+        return ret;
+    }
+
+    public ArrayList<StreakObj> CalculateNewStreaks(Coordinates toCheck, int playerNumber){
+        ArrayList<StreakObj> ret = new ArrayList<>();
+        for(StreakObj i: playerStreaks[playerNumber-1]){
+            if(i.adjacentPoint(toCheck))
+                ret.add(i);
+        }
+        return ret;
     }
 
 }

@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -305,6 +307,5 @@ public class BoardActivity extends AppCompatActivity {
         players[1].updateText(p2Text);
         tieStatus.setText(tieText);
     }
-
 
 }
