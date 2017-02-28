@@ -62,7 +62,7 @@ public class GameBoard {
             return 3;
         return 0;
     }
-    
+
     public StreakObj getLongestStreak(int playerNumber){
         StreakObj ret = playerStreaks[playerNumber-1].get(0);
         int length = 0;
