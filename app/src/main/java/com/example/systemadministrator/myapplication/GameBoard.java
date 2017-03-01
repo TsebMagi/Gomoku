@@ -63,6 +63,13 @@ public class GameBoard {
         return 0;
     }
 
+    public boolean moveIsValid(Coordinates move){
+        if(board[move.x][move.y] != 0)
+            return false;
+        else
+            return true;
+    }
+
     //TODO FIXME write algorithm for longest streak
     public StreakObj getLongestStreak(){
         return new StreakObj(new Coordinates(0,0), new Coordinates(0,0), 0, 0);
