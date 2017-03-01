@@ -293,12 +293,24 @@ public class BoardActivity extends AppCompatActivity
         public void run() {
             runOnUiThread(new Runnable() {
                 public void run () {
+                    if( players[1] instanceof NetworkPlayer)
+                        checkNetworkPlayer();
                     if(! gameOverFlag) {
                         gameOverFlag = players[0].checkExpired() || players[1].checkExpired();
                         checkGameOver();
                     }
                 }
             });
+        }
+    }
+
+    private void checkNetworkPlayer(){
+        if(playerTurn == 2 && ((NetworkPlayer) players[1]).getMadeMove()) {
+            Coordinates move = ((NetworkPlayer) players[1]).getNextMove();
+            if(piecesOnBoard.moveIsValid(move)) {
+                makeMove(move);
+                ((NetworkPlayer) players[1]).setMadeMove(false);
+            }
         }
     }
 
