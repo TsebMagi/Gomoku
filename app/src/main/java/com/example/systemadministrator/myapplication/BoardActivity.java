@@ -69,6 +69,7 @@ public class BoardActivity extends AppCompatActivity
     TextView p1Status;
     TextView p2Status;
     TextView tieStatus;
+    boolean playerWaiting;
 
     //Client used to interact with the Google API
     private GoogleApiClient mGoogleApiClient;
@@ -110,10 +111,12 @@ public class BoardActivity extends AppCompatActivity
         players[0] = new HumanPlayer();
         if(player2Type.equals("Human")) {
             players[1] = new HumanPlayer();
+            playerWaiting = false;
             localView();
         }
         else if(player2Type.equals("Network")) {
             players[1] = new NetworkPlayer();
+            playerWaiting = true;
 
             //Create API client
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -129,8 +132,12 @@ public class BoardActivity extends AppCompatActivity
             localView();
         }
 
+        if(!playerWaiting)
+            initBoard();
 
+    }
 
+    public void initBoard(){
 
         piecesOnBoard = new GameBoard(dimension);
         boardArray = new ImageView[dimension][dimension];
@@ -165,7 +172,6 @@ public class BoardActivity extends AppCompatActivity
 
         if(playerTurn == 2 && players[1] instanceof AIPlayer)
             doAIMove();
-
     }
 
     private void loadDrawables() {
@@ -623,6 +629,7 @@ public class BoardActivity extends AppCompatActivity
         // save room ID if its not initialized in onRoomCreated() so we can leave cleanly before the game starts.
         if(mRoomId==null)
             mRoomId = room.getRoomId();
+        initBoard();
     }
     @Override
     public void onActivityResult(int request, int response, Intent data) {
@@ -773,6 +780,7 @@ public class BoardActivity extends AppCompatActivity
     @Override
     public void onPeerJoined(Room room, List<String> list) {
         updateRoom(room);
+        initBoard();
     }
     @Override
     public void onRoomAutoMatching(Room room) {
@@ -785,6 +793,7 @@ public class BoardActivity extends AppCompatActivity
     @Override
     public void onPeersConnected(Room room, List<String> list) {
         updateRoom(room);
+        initBoard();
     }
     @Override
     public void onPeersDisconnected(Room room, List<String> list) {
