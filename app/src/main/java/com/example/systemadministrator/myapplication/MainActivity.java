@@ -33,13 +33,17 @@ public class MainActivity extends AppCompatActivity {
         Bundle boardVars = new Bundle();
         boardVars.putInt("Size", size);
         boardVars.putChar("Style", style);
-        if(players == 2)
-            boardVars.putString("Opponent", "Human");
-        else
+        if(players == 3)
+            boardVars.putString("Opponent", "Network");
+        else if(players == 1)
             boardVars.putString("Opponent", "AI");
+        else
+            boardVars.putString("Opponent", "Human");
         intent.putExtras(boardVars);
         startActivity(intent);
     }
+
+    public void onNetworkClick(View v) { players = 3; }
 
     public void on1PlayerClick(View v) {
         players = 1;
