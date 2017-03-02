@@ -1,4 +1,5 @@
 <resources>
+    <string name="app_id">829607533789</string>
     <string name="app_name">Gomoku</string>
     <string name="gomoku">Gomoku</string>
     <string name="players">Players</string>

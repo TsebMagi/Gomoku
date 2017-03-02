@@ -1,13 +1,18 @@
 package com.example.systemadministrator.myapplication;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -15,13 +20,37 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import android.util.Log;
 
 import com.example.systemadministrator.Gomoku.R;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.games.Games;
+import com.google.android.gms.games.GamesActivityResultCodes;
+import com.google.android.gms.games.GamesStatusCodes;
+import com.google.android.gms.games.multiplayer.Invitation;
+import com.google.android.gms.games.multiplayer.Multiplayer;
+import com.google.android.gms.games.multiplayer.OnInvitationReceivedListener;
+import com.google.android.gms.games.multiplayer.Participant;
+import com.google.android.gms.games.multiplayer.realtime.RealTimeMessage;
+import com.google.android.gms.games.multiplayer.realtime.RealTimeMessageReceivedListener;
+import com.google.android.gms.games.multiplayer.realtime.Room;
+import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
+import com.google.android.gms.games.multiplayer.realtime.RoomStatusUpdateListener;
+import com.google.android.gms.games.multiplayer.realtime.RoomUpdateListener;
 
-public class BoardActivity extends AppCompatActivity {
+public class BoardActivity extends AppCompatActivity
+        implements GoogleApiClient.OnConnectionFailedListener,
+        GoogleApiClient.ConnectionCallbacks,
+        RoomUpdateListener,
+        RealTimeMessageReceivedListener,
+        RoomStatusUpdateListener,
+        OnInvitationReceivedListener {
 
     //Working Board
     private int dimension;
@@ -42,6 +71,34 @@ public class BoardActivity extends AppCompatActivity {
     TextView p1Status;
     TextView p2Status;
     TextView tieStatus;
+    boolean playerWaiting;
+
+    //Client used to interact with the Google API
+    private GoogleApiClient mGoogleApiClient;
+    String mRoomId = null;
+    //Are we playing online
+    boolean mMultiplayer = false;
+    //Are we logged in
+    boolean loggedin = false;
+    //Participants
+    ArrayList<Participant> mParticipants = null;
+    //My participant ID
+    String mMyId = null;
+    //My invitation ID
+    String mIncomingInvitationID = null;
+    // Message buffer for sending messages
+    byte[] mMsgBuf = new byte[2];
+    //resolving connection
+    private boolean mResolvingConnectionFailure = false;
+
+
+
+    private static final int RC_SIGN_IN = 9001;
+    final static int REQUEST_CODE_RESOLVE_ERR = 1234;
+    final static int RC_SELECT_PLAYERS = 4321;
+    final static int RC_WAITING_ROOM = 2345;
+    final static int MIN_PLAYERS = 2;
+    final static int RC_INVITATION_INBOX = 3821;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,12 +111,35 @@ public class BoardActivity extends AppCompatActivity {
         style = extras.getChar("Style");
 
         players[0] = new HumanPlayer();
-        if(player2Type.equals("Human"))
+        if(player2Type.equals("Human")) {
             players[1] = new HumanPlayer();
-        else if(player2Type.equals("Network"))
+            playerWaiting = false;
+            localView();
+        }
+        else if(player2Type.equals("Network")) {
             players[1] = new NetworkPlayer();
-        else
+            playerWaiting = true;
+
+            //Create API client
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(Games.API)
+                    .addScope(Games.SCOPE_GAMES)
+                    .addOnConnectionFailedListener(this)
+                    .addConnectionCallbacks(this)
+                    .build();
+            onlineView();
+        }
+        else {
             players[1] = new AIPlayer();
+            localView();
+        }
+
+        if(!playerWaiting)
+            initBoard();
+
+    }
+
+    public void initBoard(){
 
         piecesOnBoard = new GameBoard(dimension);
         boardArray = new ImageView[dimension][dimension];
@@ -94,7 +174,6 @@ public class BoardActivity extends AppCompatActivity {
 
         if(playerTurn == 2 && players[1] instanceof AIPlayer)
             doAIMove();
-
     }
 
     private void loadDrawables() {
@@ -138,7 +217,6 @@ public class BoardActivity extends AppCompatActivity {
         boardArray[xPos][yPos].setImageDrawable(drawCell[playerTurn]); //put players piece on space chosen
         piecesOnBoard.placePiece(playerTurn, xPos, yPos); //keep track of board in 2d array data structure
         checkGameOver();
-
         if (playerTurn == 1 && players[0].hasChosen == false) {
             players[0].setHasChosen(true);
             players[1].setHasChosen(false);
@@ -223,12 +301,24 @@ public class BoardActivity extends AppCompatActivity {
         public void run() {
             runOnUiThread(new Runnable() {
                 public void run () {
+                    if( players[1] instanceof NetworkPlayer)
+                        checkNetworkPlayer();
                     if(! gameOverFlag) {
                         gameOverFlag = players[0].checkExpired() || players[1].checkExpired();
                         checkGameOver();
                     }
                 }
             });
+        }
+    }
+
+    private void checkNetworkPlayer(){
+        if(playerTurn == 2 && ((NetworkPlayer) players[1]).getMadeMove()) {
+            Coordinates move = ((NetworkPlayer) players[1]).getNextMove();
+            if(piecesOnBoard.moveIsValid(move)) {
+                makeMove(move);
+                ((NetworkPlayer) players[1]).setMadeMove(false);
+            }
         }
     }
 
@@ -331,6 +421,14 @@ public class BoardActivity extends AppCompatActivity {
             doAIMove();
     }
 
+    public void onQuickGameClick(View v) {
+        startQuickGame();
+    }
+
+    public void onOnlineGameClick(View v) {
+        startGame();
+    }
+
     private void updateGameStatus(){
         String p1Text = String.format("P1\n %d", player1Wins);
         String p2Text = String.format("P2\n%d", player2Wins);
@@ -340,6 +438,387 @@ public class BoardActivity extends AppCompatActivity {
         p2Status.setText(p2Text);
         players[1].updateText(p2Text);
         tieStatus.setText(tieText);
+    }
+
+
+
+
+
+
+
+    private void onlineView() {
+        //show
+        Button button = (Button) findViewById(R.id.loginButton);
+        button.setVisibility(View.VISIBLE);
+
+        //hide
+        LinearLayout linearLayout = (LinearLayout)findViewById(R.id.Board);
+        linearLayout.setVisibility(View.GONE);
+        TextView textView = (TextView) findViewById(R.id.p1Status);
+        textView.setVisibility(View.GONE);
+        textView = (TextView) findViewById(R.id.p2Status);
+        textView.setVisibility(View.GONE);
+        textView = (TextView) findViewById(R.id.tieStatus);
+        textView.setVisibility(View.GONE);
+        button = (Button) findViewById(R.id.onlineGameButton);
+        button.setVisibility(View.GONE);
+        button = (Button) findViewById(R.id.quickGameButton);
+        button.setVisibility(View.GONE);
+        button = (Button) findViewById(R.id.logOutButton);
+        button.setVisibility(View.GONE);
+        button = (Button) findViewById(R.id.lookInviteButton);
+        button.setVisibility(View.GONE);
+    }
+
+    private void localView() {
+        //show
+        LinearLayout linearLayout = (LinearLayout)findViewById(R.id.Board);
+        linearLayout.setVisibility(View.VISIBLE);
+        TextView textView = (TextView) findViewById(R.id.p1Status);
+        textView.setVisibility(View.VISIBLE);
+        textView = (TextView) findViewById(R.id.p2Status);
+        textView.setVisibility(View.VISIBLE);
+        textView = (TextView) findViewById(R.id.tieStatus);
+        textView.setVisibility(View.VISIBLE);
+
+        //hide
+        Button button = (Button) findViewById(R.id.onlineGameButton);
+        button.setVisibility(View.GONE);
+        button = (Button) findViewById(R.id.quickGameButton);
+        button.setVisibility(View.GONE);
+        button = (Button) findViewById(R.id.loginButton);
+        button.setVisibility(View.GONE);
+        button = (Button) findViewById(R.id.logOutButton);
+        button.setVisibility(View.GONE);
+    }
+
+    public void onInviteClick(View v) {
+        System.out.println("Check1");
+        Intent intent = Games.Invitations.getInvitationInboxIntent(mGoogleApiClient);
+        System.out.println("Check2");
+        startActivityForResult(intent, RC_INVITATION_INBOX);
+    }
+
+    public void onLoginClick(View v) {
+        loggedin = false;
+        toggleLogin();
+        mGoogleApiClient.connect();
+    }
+
+    public void onLogOutClick(View v) {
+        loggedin = true;
+        toggleLogin();
+        mGoogleApiClient.disconnect();
+    }
+
+    private void toggleLogin() {
+        if(loggedin == false) {
+            mGoogleApiClient.connect();
+            Button button = (Button) findViewById(R.id.loginButton);
+            button.setVisibility(View.GONE);
+            button = (Button) findViewById(R.id.logOutButton);
+            button.setVisibility(View.VISIBLE);
+            button = (Button) findViewById(R.id.quickGameButton);
+            button.setVisibility(View.VISIBLE);
+            button = (Button) findViewById(R.id.onlineGameButton);
+            button.setVisibility(View.VISIBLE);
+            button = (Button) findViewById(R.id.lookInviteButton);
+            button.setVisibility(View.VISIBLE);
+        }
+        else {
+            mGoogleApiClient.disconnect();
+            Button button = (Button) findViewById(R.id.loginButton);
+            button.setVisibility(View.VISIBLE);
+            button = (Button) findViewById(R.id.logOutButton);
+            button.setVisibility(View.GONE);
+            button = (Button) findViewById(R.id.quickGameButton);
+            button.setVisibility(View.GONE);
+            button = (Button) findViewById(R.id.onlineGameButton);
+            button.setVisibility(View.GONE);
+            button = (Button) findViewById(R.id.lookInviteButton);
+            button.setVisibility(View.GONE);
+
+        }
+
+    }
+
+    private void startGame() {
+        Intent intent = Games.RealTimeMultiplayer.getSelectOpponentsIntent(mGoogleApiClient, 1, 1);
+        startActivityForResult(intent, RC_SELECT_PLAYERS);
+    }
+
+    private void startQuickGame() {
+        final int MIN_OPPONENTS = 1, MAX_OPPONENTS = 1;
+        Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(MIN_OPPONENTS, MAX_OPPONENTS, 0);
+        RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(this)
+                .setMessageReceivedListener(this)
+                .setRoomStatusUpdateListener(this)
+                .setAutoMatchCriteria(autoMatchCriteria);
+        //prevent screen from sleeping
+        keepScreenOn();
+        //create room
+        Games.RealTimeMultiplayer.create(mGoogleApiClient, roomConfigBuilder.build());
+        //go to game screen
+        //but should probably go to some waiting screen
+        localView();
+        //should probably reset timers here.
+    }
+
+    void keepScreenOn() {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
+
+    void stopKeepingScreenOn() {
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
+
+    //need to work on this one. Find out where I need to go with this one.
+    void leaveRoom() {
+        stopKeepingScreenOn();
+        if (mRoomId != null) {
+            Games.RealTimeMultiplayer.leave(mGoogleApiClient, this, mRoomId);
+            mRoomId = null;
+            //switchToScreen(R.id.screen_wait);
+        } else {
+            //switchToMainScreen();
+        }
+    }
+
+    void showWaitingRoom(Room room) {
+        final int MIN_PLAYERS = Integer.MAX_VALUE;
+        Intent i = Games.RealTimeMultiplayer.getWaitingRoomIntent(mGoogleApiClient, room, MIN_PLAYERS);
+        startActivityForResult(i, RC_WAITING_ROOM);
+    }
+
+    void acceptInviteToRoom(String s) {
+        // accept the invitation
+        RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(this)
+                .setInvitationIdToAccept(s)
+                .setMessageReceivedListener(this)
+                .setRoomStatusUpdateListener(this);
+        keepScreenOn();
+        Games.RealTimeMultiplayer.join(mGoogleApiClient, roomConfigBuilder.build());
+    }
+
+    void updateRoom(Room room) {
+        if (room != null) {
+            mParticipants = room.getParticipants();
+        }
+        /*
+        if (mParticipants != null) {
+            updatePeerScoresDisplay();
+        }
+        */
+    }
+
+    @Override
+    public void onInvitationReceived(Invitation invitation) {
+        mIncomingInvitationID = invitation.getInvitationId();
+        System.out.println(mIncomingInvitationID);
+    }
+    @Override
+    public void onInvitationRemoved(String s) {
+        if (mIncomingInvitationID.equals(s) && mIncomingInvitationID != null) {
+            mIncomingInvitationID = null;
+            System.out.println("invitation removed");
+        }
+    }
+    @Override
+    public void onConnectedToRoom(Room room) {
+        //get participants and my ID:
+        mParticipants = room.getParticipants();
+        mMyId = room.getParticipantId(Games.Players.getCurrentPlayerId(mGoogleApiClient));
+        // save room ID if its not initialized in onRoomCreated() so we can leave cleanly before the game starts.
+        if(mRoomId==null)
+            mRoomId = room.getRoomId();
+        initBoard();
+    }
+    @Override
+    public void onActivityResult(int request, int response, Intent data) {
+        super.onActivityResult(request, response, data);
+        if (request == RC_SELECT_PLAYERS) {
+            if (response != Activity.RESULT_OK) {
+                // user canceled
+                return;
+            }
+            // get the invitee list
+            //Bundle extras = data.getExtras();
+            final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
+            // get auto-match criteria
+            Bundle autoMatchCriteria = null;
+            int minAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
+            int maxAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
+            if (minAutoMatchPlayers > 0 || maxAutoMatchPlayers > 0) {
+                autoMatchCriteria = RoomConfig.createAutoMatchCriteria(
+                        minAutoMatchPlayers, maxAutoMatchPlayers, 0);
+            } else {
+                autoMatchCriteria = null;
+            }
+            // create the room and specify a variant if appropriate
+            RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(this)
+                    .addPlayersToInvite(invitees)
+                    .setMessageReceivedListener(this)
+                    .setRoomStatusUpdateListener(this);
+            if (autoMatchCriteria != null)
+                roomConfigBuilder.setAutoMatchCriteria(autoMatchCriteria);
+            // prevent screen from sleeping
+            keepScreenOn();
+            Games.RealTimeMultiplayer.create(mGoogleApiClient, roomConfigBuilder.build());
+        }
+        if (request == RC_WAITING_ROOM) {
+            if (response == Activity.RESULT_OK) {
+                //start the game
+            }
+            else if (response == Activity.RESULT_CANCELED) {
+                // in this example, we take the simple approach and just leave the room:
+                leaveRoom();
+            }
+            else if (response == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
+                // player wants to leave the room.
+                leaveRoom();
+            }
+        }
+        if(request == RC_INVITATION_INBOX) {
+            Log.w("HI", "*** CANT EVEN START " + response);
+            if(response != Activity.RESULT_OK) {
+                Log.w("HI", "*** invitation inbox UI cancelled, " + response);
+                return;
+            }
+            Log.w("HI", "*** invitation inbox UI succeeded, " + response);
+            Invitation inv = data.getExtras().getParcelable(Multiplayer.EXTRA_INVITATION);
+            RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(this)
+                    .setInvitationIdToAccept(inv.getInvitationId())
+                    .setMessageReceivedListener(this)
+                    .setRoomStatusUpdateListener(this);
+            keepScreenOn();
+            Games.RealTimeMultiplayer.join(mGoogleApiClient, roomConfigBuilder.build());
+        }
+        /*
+        if (request == RC_SIGN_IN) {
+            loggedin = false;
+            mResolvingConnectionFailure = false;
+            if (request == RESULT_OK) {
+                mGoogleApiClient.connect();
+            }
+        }
+        */
+    }
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if (bundle != null) {
+            Invitation inv =
+                    bundle.getParcelable(Multiplayer.EXTRA_INVITATION);
+
+            if (inv != null && inv.getInvitationId() != null) {
+                acceptInviteToRoom(inv.getInvitationId());
+                return;
+            }
+        }
+        //switch to main screen?
+    }
+    @Override
+    public void onConnectionSuspended(int i) {
+        //attempt to reconnect
+        mGoogleApiClient.connect();
+    }
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        if (connectionResult.hasResolution()) {
+            try {
+                connectionResult.startResolutionForResult(this, REQUEST_CODE_RESOLVE_ERR);
+            } catch (IntentSender.SendIntentException e) {
+                mGoogleApiClient.connect();
+            }
+        }
+    }
+    @Override
+    public void onJoinedRoom(int statusCode, Room room) {
+        if (statusCode != GamesStatusCodes.STATUS_OK) {
+            stopKeepingScreenOn();
+            return;
+        }
+        showWaitingRoom(room);
+    }
+    @Override
+    public void onLeftRoom(int i, String s) {
+        //go to main screen
+    }
+    @Override
+    public void onDisconnectedFromRoom(Room room) {
+        // leave the room
+        Games.RealTimeMultiplayer.leave(mGoogleApiClient, null, mRoomId);
+        // clear the flag that keeps the screen on
+        stopKeepingScreenOn();
+        // show error message and return to main screen
+    }
+    @Override
+    public void onRoomCreated(int statusCode, Room room) {
+        if (statusCode != GamesStatusCodes.STATUS_OK) {
+            stopKeepingScreenOn();
+            Log.e("Problem...", "*** Error: onRoomCreated, status " + statusCode);
+            return;
+        }
+        mRoomId = room.getRoomId();
+        showWaitingRoom(room);
+    }
+    @Override
+    public void onRoomConnected(int i, Room room) {
+        if(i != GamesStatusCodes.STATUS_OK) {
+            stopKeepingScreenOn();
+        }
+    }
+    @Override
+    public void onPeerDeclined(Room room, List<String> list) {
+        updateRoom(room);
+    }
+    @Override
+    public void onPeerInvitedToRoom(Room room, List<String> list) {
+        updateRoom(room);
+    }
+    @Override
+    public void onPeerLeft(Room room, List<String> list) {
+        updateRoom(room);
+    }
+    @Override
+    public void onPeerJoined(Room room, List<String> list) {
+        updateRoom(room);
+        initBoard();
+    }
+    @Override
+    public void onRoomAutoMatching(Room room) {
+        updateRoom(room);
+    }
+    @Override
+    public void onRoomConnecting(Room room) {
+        updateRoom(room);
+    }
+    @Override
+    public void onPeersConnected(Room room, List<String> list) {
+        updateRoom(room);
+        initBoard();
+    }
+    @Override
+    public void onPeersDisconnected(Room room, List<String> list) {
+        updateRoom(room);
+    }
+    @Override
+    public void onRealTimeMessageReceived(RealTimeMessage realTimeMessage) {
+        // get real-time message
+        final byte[] b = realTimeMessage.getMessageData();
+        final String sender = realTimeMessage.getSenderParticipantId();
+        Log.d("HI", "Message received from: " + sender);
+        // process message
+    }
+
+
+
+    @Override
+    public void onP2PConnected(String s) {
+
+    }
+    @Override
+    public void onP2PDisconnected(String s) {
+
     }
 
 }

@@ -58,20 +58,15 @@
             android:id="@+id/twoPlayerButton"
             android:layout_weight="1"
             android:onClick="on2PlayerClick" />
-    </RadioGroup>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/board_size"
-        android:textAlignment="center"
-        android:textIsSelectable="false"
-        android:textStyle="bold"
-        android:textSize="30sp"
-        android:id="@+id/BoardSizetext"
-        android:layout_marginTop="69dp"
-        android:layout_below="@+id/PlayerNumText"
-        android:layout_centerHorizontal="true" />
+        <RadioButton
+            android:text="Online"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/onlineRadioButton"
+            android:layout_weight="1"
+            android:onClick="onNetworkClick" />
+    </RadioGroup>
 
     <RadioGroup
         android:layout_width="wrap_content"
@@ -154,5 +149,17 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:onClick="onPlayClick" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/board_size"
+        android:textAlignment="center"
+        android:textIsSelectable="false"
+        android:textStyle="bold"
+        android:textSize="30sp"
+        android:id="@+id/BoardSizetext"
+        android:layout_below="@+id/PlayerButtonGroup"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
