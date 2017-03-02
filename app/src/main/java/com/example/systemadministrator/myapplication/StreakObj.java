@@ -42,19 +42,19 @@ public class StreakObj {
 
         switch (this.type){
             case VERTICAL:
-                if(this.startPiece.x == toCheck.x && (this.startPiece.y-1 == toCheck.y || this.endPiece.y+1== toCheck.y))
+                if(this.startPiece.x == toCheck.x && (this.endPiece.y+1 == toCheck.y || this.startPiece.y-1 == toCheck.y))
                     return true;
                 break;
             case HORIZONTAL:
-                if(this.startPiece.y == toCheck.y &&(this.startPiece.x-1 == toCheck.x ||this.endPiece.x+1 == toCheck.y))
-                    return true;
-                break;
-            case DIAGONALUP:
-                if((this.startPiece.x -1 == toCheck.x && this.startPiece.y-1 == toCheck.y) || (this.endPiece.x+1 == toCheck.x && this.endPiece.y+1 == toCheck.y))
+                if(this.startPiece.y == toCheck.y &&(this.startPiece.x-1 == toCheck.x ||this.endPiece.x+1 == toCheck.x))
                     return true;
                 break;
             case DIAGONALDOWN:
-                if((this.startPiece.x -1 == toCheck.x && this.startPiece.y+1 == toCheck.y) || (this.endPiece.x+1 == toCheck.x && this.endPiece.y-1 == toCheck.y))
+                if((this.startPiece.x -1 == toCheck.x && this.startPiece.y-1 == toCheck.y) || (this.endPiece.x+1 == toCheck.x && this.endPiece.y+1 == toCheck.y))
+                    return true;
+                break;
+            case DIAGONALUP:
+                if((this.startPiece.x +1 == toCheck.x && this.startPiece.y-1 == toCheck.y) || (this.endPiece.x-1 == toCheck.x && this.endPiece.y+1 == toCheck.y))
                     return true;
                 break;
         }

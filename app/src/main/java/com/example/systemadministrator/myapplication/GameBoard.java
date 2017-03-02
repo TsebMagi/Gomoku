@@ -13,6 +13,7 @@ public class GameBoard {
     //the game board
     private int[][] board;
     private int boardSize;
+    private char style;
 
     //used for the game state algorithms
     private ArrayList<StreakObj>[] playerStreaks;
@@ -64,31 +65,17 @@ public class GameBoard {
     }
 
     public boolean moveIsValid(Coordinates move){
-        if(board[move.x][move.y] != 0)
-            return false;
-        else
-            return true;
-    }
-
-    //TODO FIXME write algorithm for longest streak
-    public StreakObj getLongestStreak(){
-        return new StreakObj(new Coordinates(0,0), new Coordinates(0,0), 0, 0);
-    public StreakObj getLongestStreak(int playerNumber){
-        StreakObj ret = playerStreaks[playerNumber-1].get(0);
-        int length = 0;
-        for (StreakObj i : playerStreaks[playerNumber-1]){
-            if (i.length > length)
-                length = i.length;
-                ret = i;
-        }
-        return ret;
+        return board[move.x][move.y] == 0;
     }
 
     public StreakObj getLongestWinnableStreak(int playerNumber){
-        StreakObj ret = playerStreaks[playerNumber-1].get(0);
+
+        StreakObj ret = null;
+        if (playerStreaks[playerNumber-1].isEmpty() == false)
+            ret = playerStreaks[playerNumber-1].get(0);
         int length = 0;
         for (StreakObj i : playerStreaks[playerNumber-1]){
-            if (i.length > length && i.length < 4)
+            if (i.length > length && i.length <= 4)
                 length = i.length;
                 ret = i;
         }
@@ -152,6 +139,7 @@ public class GameBoard {
         //return list
         return ret;
     }
+
     private StreakObj buildHorizontalStreak(int playerNumber, int xCoordinate, int yCoordinate){
         int xStart = xCoordinate;
         int xEnd = xCoordinate;
@@ -273,7 +261,7 @@ public class GameBoard {
         if ((toCheck.startPiece.x == 0 && toCheck.endPiece.y == boardSize-1) || (toCheck.endPiece.x == boardSize - 1 && toCheck.startPiece.y == 0)) return true;
         //Case: starts at edge of board
         if (toCheck.startPiece.y == 0 && toCheck.endPiece.x < boardSize-1 && toCheck.endPiece.y < boardSize-1 && board[toCheck.endPiece.x + 1][toCheck.endPiece.y + 1] == 0) return true;
-        if (toCheck.startPiece.y == 0 && toCheck.endPiece.x < boardSize-1 && toCheck.endPiece.y < boardSize-1 && board[toCheck.endPiece.x + 1][toCheck.endPiece.y + 1] == 0) return true;
+        if (toCheck.startPiece.x == 0 && toCheck.endPiece.x < boardSize-1 && toCheck.endPiece.y < boardSize-1 && board[toCheck.endPiece.x + 1][toCheck.endPiece.y + 1] == 0) return true;
         //Case: ends on edge of Board
         if (toCheck.endPiece.x == boardSize - 1 && toCheck.startPiece.x > 1&& toCheck.startPiece.y >1 && board[toCheck.startPiece.x - 1][toCheck.startPiece.y - 1] == 0) return true;
         if (toCheck.endPiece.y == boardSize - 1 && toCheck.startPiece.x > 1&& toCheck.startPiece.y >1 && board[toCheck.startPiece.x - 1][toCheck.startPiece.y - 1] == 0) return true;

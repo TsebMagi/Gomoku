@@ -1,6 +1,7 @@
 package com.example.systemadministrator.myapplication;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by Tanner on 2/6/2017.
@@ -19,12 +20,12 @@ public class AIPlayer extends Player {
     }
 
     public Coordinates generateMove(GameBoard board){
-        ArrayList<Coordinates> toExamine = new ArrayList<>(board.OpenSpaces());
+        ArrayList<Coordinates> toExamine = board.OpenSpaces();
         StreakObj potentialWinStreak = board.getLongestWinnableStreak(playerNumber);
-        StreakObj potentialDefenseStreak = board.getLongestStreak((playerNumber-1));
+        StreakObj potentialDefenseStreak = board.getLongestWinnableStreak(playerNumber-1);
 
         //win
-        if(potentialWinStreak != null && potentialWinStreak.length == 3) {
+        if(potentialWinStreak != null && potentialWinStreak.length >= 3) {
 
             for (Coordinates i : toExamine) {
                 if (potentialWinStreak.adjacentPoint(i))
@@ -33,7 +34,7 @@ public class AIPlayer extends Player {
         }
 
         //defend
-        if(potentialDefenseStreak != null && potentialDefenseStreak.length == 3){
+        if(potentialDefenseStreak != null && potentialDefenseStreak.length >= 3){
             for(Coordinates i : toExamine)
                 if(potentialDefenseStreak.adjacentPoint(i))
                     return i;
