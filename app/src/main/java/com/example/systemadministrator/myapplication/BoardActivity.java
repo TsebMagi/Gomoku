@@ -586,6 +586,7 @@ public class BoardActivity extends AppCompatActivity
         } else {
             //switchToMainScreen();
         }
+        onlineView();
     }
 
     void showWaitingRoom(Room room) {
@@ -685,6 +686,7 @@ public class BoardActivity extends AppCompatActivity
             if (response == Activity.RESULT_OK) {
                 Log.d(TAG, "RC_WAITING_ROOM, Activity.RESULT_OK");
                 //start the game
+                localView();
             }
             else if (response == Activity.RESULT_CANCELED) {
                 Log.d(TAG, "RC_WAITING_ROOM, Activity.RESULT_CANCELED");
@@ -775,6 +777,7 @@ public class BoardActivity extends AppCompatActivity
         // clear the flag that keeps the screen on
         stopKeepingScreenOn();
         // show error message and return to main screen
+        onlineView();
     }
     @Override
     public void onRoomCreated(int statusCode, Room room) {
