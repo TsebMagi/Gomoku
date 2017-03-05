@@ -645,13 +645,17 @@ public class BoardActivity extends AppCompatActivity
         Log.d("onActivityResult", "Activity " + request + " produced result " + response);
         super.onActivityResult(request, response, data);
         if (request == RC_SELECT_PLAYERS) {
+            Log.d(TAG, "RC_SELECT_PLAYERS");
             if (response != Activity.RESULT_OK) {
+                Log.w(TAG, "*** select players UI cancelled, " + response);
                 // user canceled
                 return;
             }
+            Log.d(TAG, "Select players UI succeeded.");
             // get the invitee list
             //Bundle extras = data.getExtras();
             final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
+            Log.d(TAG, "Invitee count: " + invitees.size());
             // get auto-match criteria
             Bundle autoMatchCriteria = null;
             int minAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
@@ -659,10 +663,12 @@ public class BoardActivity extends AppCompatActivity
             if (minAutoMatchPlayers > 0 || maxAutoMatchPlayers > 0) {
                 autoMatchCriteria = RoomConfig.createAutoMatchCriteria(
                         minAutoMatchPlayers, maxAutoMatchPlayers, 0);
+                Log.d(TAG, "Automatch criteria: " + autoMatchCriteria);
             } else {
                 autoMatchCriteria = null;
             }
             // create the room and specify a variant if appropriate
+            Log.d(TAG, "Creating room...");
             RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(this)
                     .addPlayersToInvite(invitees)
                     .setMessageReceivedListener(this)
@@ -672,16 +678,21 @@ public class BoardActivity extends AppCompatActivity
             // prevent screen from sleeping
             keepScreenOn();
             Games.RealTimeMultiplayer.create(mGoogleApiClient, roomConfigBuilder.build());
+            Log.d(TAG, "Room created, waiting for it to be ready...");
         }
         if (request == RC_WAITING_ROOM) {
+            Log.d(TAG, "RC_WAITING_ROOM");
             if (response == Activity.RESULT_OK) {
+                Log.d(TAG, "RC_WAITING_ROOM, Activity.RESULT_OK");
                 //start the game
             }
             else if (response == Activity.RESULT_CANCELED) {
+                Log.d(TAG, "RC_WAITING_ROOM, Activity.RESULT_CANCELED");
                 // in this example, we take the simple approach and just leave the room:
                 leaveRoom();
             }
             else if (response == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
+                Log.d(TAG, "RC_WAITING_ROOM, Activity.RESULT_LEFT_ROOM");
                 // player wants to leave the room.
                 leaveRoom();
             }
