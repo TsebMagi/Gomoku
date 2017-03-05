@@ -642,7 +642,7 @@ public class BoardActivity extends AppCompatActivity
     }
     @Override
     public void onActivityResult(int request, int response, Intent data) {
-        Log.d("onActivityResult", "An activity produced a result");
+        Log.d("onActivityResult", "Activity " + request + " produced result " + response);
         super.onActivityResult(request, response, data);
         if (request == RC_SELECT_PLAYERS) {
             if (response != Activity.RESULT_OK) {
@@ -713,6 +713,7 @@ public class BoardActivity extends AppCompatActivity
     }
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+        Log.d("onConnected", "Connected");
         if (bundle != null) {
             Invitation inv =
                     bundle.getParcelable(Multiplayer.EXTRA_INVITATION);
@@ -726,11 +727,13 @@ public class BoardActivity extends AppCompatActivity
     }
     @Override
     public void onConnectionSuspended(int i) {
+        Log.d("onConnectionSuspended", "Connection suspended, attempting to reconnect");
         //attempt to reconnect
         mGoogleApiClient.connect();
     }
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.d("onConnectionFailed", "Connection failed");
         if (connectionResult.hasResolution()) {
             try {
                 connectionResult.startResolutionForResult(this, REQUEST_CODE_RESOLVE_ERR);
@@ -741,6 +744,7 @@ public class BoardActivity extends AppCompatActivity
     }
     @Override
     public void onJoinedRoom(int statusCode, Room room) {
+        Log.d("onJoinedRoom", "Joined room");
         if (statusCode != GamesStatusCodes.STATUS_OK) {
             stopKeepingScreenOn();
             return;
@@ -749,10 +753,12 @@ public class BoardActivity extends AppCompatActivity
     }
     @Override
     public void onLeftRoom(int i, String s) {
+        Log.d("onLeftRoom", "Left room");
         //go to main screen
     }
     @Override
     public void onDisconnectedFromRoom(Room room) {
+        Log.d("onDisconnectedFromRoom","Disconnected from room");
         // leave the room
         Games.RealTimeMultiplayer.leave(mGoogleApiClient, null, mRoomId);
         // clear the flag that keeps the screen on
@@ -761,6 +767,7 @@ public class BoardActivity extends AppCompatActivity
     }
     @Override
     public void onRoomCreated(int statusCode, Room room) {
+        Log.d("onRoomCreated", "Created room");
         if (statusCode != GamesStatusCodes.STATUS_OK) {
             stopKeepingScreenOn();
             Log.e("Problem...", "*** Error: onRoomCreated, status " + statusCode);
@@ -771,46 +778,56 @@ public class BoardActivity extends AppCompatActivity
     }
     @Override
     public void onRoomConnected(int i, Room room) {
+        Log.d("onRoomConnected", "Connected to a room");
         if(i != GamesStatusCodes.STATUS_OK) {
             stopKeepingScreenOn();
         }
     }
     @Override
     public void onPeerDeclined(Room room, List<String> list) {
+        Log.d("onPeerDeclined","");
         updateRoom(room);
     }
     @Override
     public void onPeerInvitedToRoom(Room room, List<String> list) {
+        Log.d("onPeerInvitedToRoom", "");
         updateRoom(room);
     }
     @Override
     public void onPeerLeft(Room room, List<String> list) {
+        Log.d("onPeerLeft","");
         updateRoom(room);
     }
     @Override
     public void onPeerJoined(Room room, List<String> list) {
+        Log.d("onPeerJoined", "");
         updateRoom(room);
         initBoard();
     }
     @Override
     public void onRoomAutoMatching(Room room) {
+        Log.d("onRoomAutoMatching", "");
         updateRoom(room);
     }
     @Override
     public void onRoomConnecting(Room room) {
+        Log.d("onRoomConnecting","");
         updateRoom(room);
     }
     @Override
     public void onPeersConnected(Room room, List<String> list) {
+        Log.d("onPeersConnected","");
         updateRoom(room);
         initBoard();
     }
     @Override
     public void onPeersDisconnected(Room room, List<String> list) {
+        Log.d("onPeersDisconnected", "");
         updateRoom(room);
     }
     @Override
     public void onRealTimeMessageReceived(RealTimeMessage realTimeMessage) {
+        Log.d("onRealTimeMessageReceiv", "Got a realtime message");
         // get real-time message
         final byte[] b = realTimeMessage.getMessageData();
         final String sender = realTimeMessage.getSenderParticipantId();
@@ -822,11 +839,11 @@ public class BoardActivity extends AppCompatActivity
 
     @Override
     public void onP2PConnected(String s) {
-
+        Log.d("onP2PConnected","");
     }
     @Override
     public void onP2PDisconnected(String s) {
-
+        Log.d("onP2PDisconnected","");
     }
 
 }
