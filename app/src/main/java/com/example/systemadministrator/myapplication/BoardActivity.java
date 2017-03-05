@@ -767,7 +767,7 @@ public class BoardActivity extends AppCompatActivity
     }
     @Override
     public void onRoomCreated(int statusCode, Room room) {
-        Log.d("onRoomCreated", "Created room");
+        Log.d("onRoomCreated", "Created room " + room + " with status code " + statusCode);
         if (statusCode != GamesStatusCodes.STATUS_OK) {
             stopKeepingScreenOn();
             Log.e("Problem...", "*** Error: onRoomCreated, status " + statusCode);
