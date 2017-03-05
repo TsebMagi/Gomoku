@@ -99,9 +99,11 @@ public class BoardActivity extends AppCompatActivity
     final static int RC_WAITING_ROOM = 2345;
     final static int MIN_PLAYERS = 2;
     final static int RC_INVITATION_INBOX = 3821;
+    private static final String TAG = "BoardActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG + " onCreate", "Created a new board");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
 
@@ -117,6 +119,7 @@ public class BoardActivity extends AppCompatActivity
             localView();
         }
         else if(player2Type.equals("Network")) {
+            Log.d(TAG + " onCreate", "Setting up a network game");
             players[1] = new NetworkPlayer();
             playerWaiting = true;
 
@@ -543,6 +546,7 @@ public class BoardActivity extends AppCompatActivity
     }
 
     private void startGame() {
+        Log.d(TAG + " startGame", "Started multiplayer activity");
         Intent intent = Games.RealTimeMultiplayer.getSelectOpponentsIntent(mGoogleApiClient, 1, 1);
         startActivityForResult(intent, RC_SELECT_PLAYERS);
     }
@@ -613,11 +617,13 @@ public class BoardActivity extends AppCompatActivity
 
     @Override
     public void onInvitationReceived(Invitation invitation) {
+        Log.d("onInvitationReceived", "Got a game invite" + invitation);
         mIncomingInvitationID = invitation.getInvitationId();
         System.out.println(mIncomingInvitationID);
     }
     @Override
     public void onInvitationRemoved(String s) {
+        Log.d("onInvitationRemoved", "Invitation went away");
         if (mIncomingInvitationID.equals(s) && mIncomingInvitationID != null) {
             mIncomingInvitationID = null;
             System.out.println("invitation removed");
@@ -625,6 +631,7 @@ public class BoardActivity extends AppCompatActivity
     }
     @Override
     public void onConnectedToRoom(Room room) {
+        Log.d("onConnectedToRoom", "Connected to room" + room);
         //get participants and my ID:
         mParticipants = room.getParticipants();
         mMyId = room.getParticipantId(Games.Players.getCurrentPlayerId(mGoogleApiClient));
@@ -635,6 +642,7 @@ public class BoardActivity extends AppCompatActivity
     }
     @Override
     public void onActivityResult(int request, int response, Intent data) {
+        Log.d("onActivityResult", "An activity produced a result");
         super.onActivityResult(request, response, data);
         if (request == RC_SELECT_PLAYERS) {
             if (response != Activity.RESULT_OK) {
