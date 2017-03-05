@@ -17,4 +17,8 @@
     <string name="title_activity_board">BoardActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <string name="inv_popup_text">Incoming invitation!</string>
+    <string name="is_inviting_you">is challenging you to a game!</string>
+    <string name="accept_popup_invite">Accept!</string>
 </resources>

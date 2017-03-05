@@ -471,6 +471,14 @@ public class BoardActivity extends AppCompatActivity
         button.setVisibility(View.GONE);
         button = (Button) findViewById(R.id.lookInviteButton);
         button.setVisibility(View.GONE);
+        boolean showInvPopup;
+        if (mIncomingInvitationID == null) {
+            // no invitation, so no popup
+            showInvPopup = false;
+        } else {
+            showInvPopup = true;
+        }
+        findViewById(R.id.invitation_popup).setVisibility(showInvPopup ? View.VISIBLE : View.GONE);
     }
 
     private void localView() {
@@ -493,6 +501,7 @@ public class BoardActivity extends AppCompatActivity
         button.setVisibility(View.GONE);
         button = (Button) findViewById(R.id.logOutButton);
         button.setVisibility(View.GONE);
+        findViewById(R.id.invitation_popup).setVisibility(View.GONE);
     }
 
     public void onInviteClick(View v) {
@@ -620,6 +629,9 @@ public class BoardActivity extends AppCompatActivity
     public void onInvitationReceived(Invitation invitation) {
         Log.d("onInvitationReceived", "Got a game invite" + invitation);
         mIncomingInvitationID = invitation.getInvitationId();
+        ((TextView) findViewById(R.id.incoming_invitation_text)).setText(
+                invitation.getInviter().getDisplayName() + " " +
+                        getString(R.string.is_inviting_you));
         System.out.println(mIncomingInvitationID);
     }
     @Override
