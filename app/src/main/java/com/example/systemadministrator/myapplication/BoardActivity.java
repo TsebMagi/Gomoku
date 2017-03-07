@@ -132,7 +132,7 @@ public class BoardActivity extends AppCompatActivity
             WebView myWebView = (WebView) findViewById(R.id.webview);
             WebSettings webSettings = myWebView.getSettings();
             webSettings.setJavaScriptEnabled(true);
-            myWebView.loadUrl("http://www.noahfreed.com/shoku.html");
+            myWebView.loadUrl("http://www.noahfreed.com/gomoku.html");
 
             //Create API client
             mGoogleApiClient = new GoogleApiClient.Builder(this)
