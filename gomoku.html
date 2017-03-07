@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
+
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+
+		<script type="text/javascript" src="http://75.98.169.85:8080/socket.io/socket.io.js"></script>
+
+		<style>
+		  body {
+		    padding: 0;
+		    margin: 0;
+		    background-color:#0F0E0C;
+		    color:white;
+		  }
+		  a {
+		    color:white;
+		  }
+		  pre {
+		    word-wrap: break-word;      /* IE 5.5-7 */
+		    white-space: -moz-pre-wrap; /* Firefox 1.0-2.0 */
+		    white-space: pre-wrap;      /* current browsers */
+		  }
+		  .logo {
+		    width: 240px;
+		  }
+		  .center {
+		    text-align: center;
+		  }
+		  .floatl {
+		    float:left;
+		  }
+		  .sidebar {
+		    padding-left: 0px;
+		    padding-right: 0px;
+		  }
+		  .chat {
+		    width: 300px;
+		    max-width: 300px;
+		  }
+		</style>
+		<title>Gomoku Online</title>
+	</head>
+	<body>
+		<div id="chat" class="floatl sidebar chat">
+			<h3>Chat</h3>
+			<input id="message" type="text" placeholder="message">
+			<input id="submit" type="button" value="submit">
+			<br>
+			<pre id="output"></pre>
+		</div>
+		<script type="text/javascript">
+			//Establish communication with the server
+			var socketHandle = io.connect('http://75.98.169.85:8080/');
+
+			var strIdent = '';
+
+			socketHandle.on('hello', function(data) {
+				strIdent = data.id;
+			});
+			//Chat
+			socketHandle.on('message', function(data) {
+				var div = document.createElement('div');
+				div.appendChild(document.createTextNode(data.message));
+				var escaped = div.innerHTML;
+				jQuery('#output')
+					.prepend(data.from + ': ' + escaped + '\n')
+				;
+			});
+
+			jQuery('#submit')
+				.on('click', function() {
+					socketHandle.emit('message', {
+						'to': 'everyone',
+						'message': jQuery('#message').val()
+					});
+					jQuery('#message').val('');
+				})
+			;
+
+			document.getElementById('message').addEventListener('keydown', function (e) {
+				if(e.keyCode == 13) {
+					socketHandle.emit('message', {
+                                               	'to': 'everyone',
+                                               	'message': jQuery('#message').val()
+                                       	});
+                                       	jQuery('#message').val('');
+				}
+			});
+		</script>
+	</body>
+</html>
+
