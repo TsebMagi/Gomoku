@@ -1,5 +1,7 @@
 package com.example.systemadministrator.myapplication;
 
+import android.util.Log;
+
 /**
  * Created by Tanner on 2/6/2017.
  */
@@ -16,6 +18,8 @@ package com.example.systemadministrator.myapplication;
     }
 
     public void sendMove(int xPos, int yPos){
+        Log.d("sendMove", "Sent move " + xPos + " " + yPos);
+        
         return;
     }
 
