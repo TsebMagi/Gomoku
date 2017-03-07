@@ -133,15 +133,16 @@ public class BoardActivity extends AppCompatActivity
             WebSettings webSettings = myWebView.getSettings();
             webSettings.setJavaScriptEnabled(true);
             myWebView.loadUrl("http://www.noahfreed.com/gomoku.html");
+            localView();
 
             //Create API client
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
+            /*mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .addApi(Games.API)
                     .addScope(Games.SCOPE_GAMES)
                     .addOnConnectionFailedListener(this)
                     .addConnectionCallbacks(this)
                     .build();
-            onlineView();
+            onlineView();*/
         }
         else {
             players[1] = new AIPlayer();
