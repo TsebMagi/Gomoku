@@ -126,7 +126,7 @@ public class BoardActivity extends AppCompatActivity
         else if(player2Type.equals("Network")) {
             Log.d(TAG + " onCreate", "Setting up a network game");
             players[1] = new NetworkPlayer();
-            playerWaiting = true;
+            //playerWaiting = true;
 
             //Website used for passing messages between clients
             WebView myWebView = (WebView) findViewById(R.id.webview);
