@@ -106,6 +106,8 @@ public class BoardActivity extends AppCompatActivity
         Log.d(TAG + " onCreate", "Created a new board");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
+        System.out.println("hi");
+        Log.w("onCreate", "starting onCreate");
 
         Bundle extras =  getIntent().getExtras();
         dimension = extras.getInt("Size");
@@ -114,6 +116,7 @@ public class BoardActivity extends AppCompatActivity
 
         players[0] = new HumanPlayer();
         if(player2Type.equals("Human")) {
+            Log.d("onCreate", "player2type = human");
             players[1] = new HumanPlayer();
             playerWaiting = false;
             localView();
@@ -599,6 +602,7 @@ public class BoardActivity extends AppCompatActivity
     }
 
     void showWaitingRoom(Room room) {
+        Log.d("showWaitingRoom","Displaying the waiting room");
         final int MIN_PLAYERS = Integer.MAX_VALUE;
         Intent i = Games.RealTimeMultiplayer.getWaitingRoomIntent(mGoogleApiClient, room, MIN_PLAYERS);
         startActivityForResult(i, RC_WAITING_ROOM);
@@ -666,7 +670,7 @@ public class BoardActivity extends AppCompatActivity
             }
             Log.d(TAG, "Select players UI succeeded.");
             // get the invitee list
-            //Bundle extras = data.getExtras();
+            Bundle extras = data.getExtras();
             final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
             Log.d(TAG, "Invitee count: " + invitees.size());
             // get auto-match criteria
@@ -682,15 +686,14 @@ public class BoardActivity extends AppCompatActivity
             }
             // create the room and specify a variant if appropriate
             Log.d(TAG, "Creating room...");
-            RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(this)
-                    .addPlayersToInvite(invitees)
-                    .setMessageReceivedListener(this)
-                    .setRoomStatusUpdateListener(this);
+            RoomConfig.Builder roomConfigBuilder = makeBasicRoomConfigBuilder();
+            roomConfigBuilder.addPlayersToInvite(invitees);
             if (autoMatchCriteria != null)
                 roomConfigBuilder.setAutoMatchCriteria(autoMatchCriteria);
             // prevent screen from sleeping
             keepScreenOn();
-            Games.RealTimeMultiplayer.create(mGoogleApiClient, roomConfigBuilder.build());
+            RoomConfig roomConfig = roomConfigBuilder.build();
+            Games.RealTimeMultiplayer.create(mGoogleApiClient, roomConfig);
             Log.d(TAG, "Room created, waiting for it to be ready...");
         }
         if (request == RC_WAITING_ROOM) {
@@ -718,13 +721,17 @@ public class BoardActivity extends AppCompatActivity
                 return;
             }
             Log.w("HI", "*** invitation inbox UI succeeded, " + response);
-            Invitation inv = data.getExtras().getParcelable(Multiplayer.EXTRA_INVITATION);
-            RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(this)
-                    .setInvitationIdToAccept(inv.getInvitationId())
-                    .setMessageReceivedListener(this)
-                    .setRoomStatusUpdateListener(this);
+            // get the selected invitation
+            Bundle extras = data.getExtras();
+            Invitation invitation =
+                    extras.getParcelable(Multiplayer.EXTRA_INVITATION);
+            // accept it!
+            RoomConfig roomConfig = makeBasicRoomConfigBuilder()
+                    .setInvitationIdToAccept(invitation.getInvitationId())
+                    .build();
+            Games.RealTimeMultiplayer.join(mGoogleApiClient, roomConfig);
+
             keepScreenOn();
-            Games.RealTimeMultiplayer.join(mGoogleApiClient, roomConfigBuilder.build());
         }
         /*
         if (request == RC_SIGN_IN) {
@@ -736,6 +743,15 @@ public class BoardActivity extends AppCompatActivity
         }
         */
     }
+
+    // create a RoomConfigBuilder that's appropriate for your implementation
+    private RoomConfig.Builder makeBasicRoomConfigBuilder() {
+        return RoomConfig.builder(this)
+                .setMessageReceivedListener(this)
+                .setRoomStatusUpdateListener(this);
+    }
+
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.d("onConnected", "Connected");
