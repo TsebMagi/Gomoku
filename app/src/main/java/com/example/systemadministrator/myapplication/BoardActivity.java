@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.TextView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -125,6 +127,12 @@ public class BoardActivity extends AppCompatActivity
             Log.d(TAG + " onCreate", "Setting up a network game");
             players[1] = new NetworkPlayer();
             playerWaiting = true;
+
+            //Website used for passing messages between clients
+            WebView myWebView = (WebView) findViewById(R.id.webview);
+            WebSettings webSettings = myWebView.getSettings();
+            webSettings.setJavaScriptEnabled(true);
+            myWebView.loadUrl("http://www.noahfreed.com/shoku.html");
 
             //Create API client
             mGoogleApiClient = new GoogleApiClient.Builder(this)
