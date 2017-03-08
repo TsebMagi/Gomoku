@@ -166,7 +166,11 @@ public class BoardActivity extends AppCompatActivity
             settings.setJavaScriptEnabled(true);
             mWebView.addJavascriptInterface(new WebMessenger(this), "Android");
             String user = "test";
-            final String js = "javascript:document.getElementById('message').value = '"+user+"';";
+            final String js = "javascript:socketHandle.emit('message', {" +
+                    "'to': 'everyone'," +
+                    "'message': 'Gomoku connection'" +
+                    "});";
+                    //"javascript:document.getElementById('message').value = '"+user+"';";
             mWebView.setWebViewClient(new WebViewClient() {
                   @Override
                   public void onPageFinished(WebView view, String url) {
@@ -296,12 +300,30 @@ public class BoardActivity extends AppCompatActivity
             switchTimers(1);
             if (players[1] instanceof NetworkPlayer) {
                 ((NetworkPlayer) players[1]).sendMove(xPos, yPos);
-                /*WebView myWebView = (WebView) findViewById(R.id.webview);
-                WebSettings webSettings = myWebView.getSettings();
-                webSettings.setJavaScriptEnabled(true);
-                webSettings.setDomStorageEnabled(true);
-                String username = "test";
-                myWebView.evaluateJavascript("javascript:document.getElementById('message').val='"+username+"';",null);*/
+                WebView mWebView = (WebView) findViewById(R.id.webview);
+                String url = "http://www.noahfreed.com/gomoku.html";
+                mWebView.loadUrl(url);
+                WebSettings settings = mWebView.getSettings();
+                settings.setJavaScriptEnabled(true);
+                mWebView.addJavascriptInterface(new WebMessenger(this), "Android");
+                String user = "test";
+                final String js = "javascript:socketHandle.emit('message', {" +
+                        "'to': 'everyone'," +
+                        "'message': 'Sent move'" +
+                        "});";
+                //"javascript:document.getElementById('message').value = '"+user+"';";
+                mWebView.setWebViewClient(new WebViewClient() {
+                    @Override
+                    public void onPageFinished(WebView view, String url) {
+                        super.onPageFinished(view, url);
+                        view.evaluateJavascript(js, new ValueCallback<String>() {
+                            @Override
+                            public void onReceiveValue(String s) {
+
+                            }
+                        });
+                    };
+                });
             }
             else if (players[1] instanceof AIPlayer && !gameOverFlag) {
                 doAIMove();
