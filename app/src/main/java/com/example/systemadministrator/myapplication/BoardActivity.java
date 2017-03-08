@@ -59,7 +59,7 @@ public class BoardActivity extends AppCompatActivity
     private int dimension;
     private String player2Type;
     private char style;
-    private Player[] players = new Player[2];
+    public Player[] players = new Player[2];
     private ImageView[][] boardArray;
     private Context context;
     private GameBoard piecesOnBoard; //0 is uninitialized, 1 or 2 to represent players pieces, 3 is empty
@@ -104,6 +104,26 @@ public class BoardActivity extends AppCompatActivity
     final static int RC_INVITATION_INBOX = 3821;
     private static final String TAG = "BoardActivity";
 
+    class WebMessenger extends WebAppInterface {
+        /**
+         * Instantiate the interface and set the context
+         *
+         * @param c
+         */
+        WebMessenger(Context c) {
+            super(c);
+        }
+
+        /** Show a move from the web page */
+        @JavascriptInterface
+        public void showMove(int x, int y) {
+            Log.d("showMove","Received move " + x + " " + y);
+            Coordinates xy = new Coordinates(x,y);
+            ((NetworkPlayer) players[1]).setNextMove(xy);
+            ((NetworkPlayer) players[1]).setMadeMove(true);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG + " onCreate", "Created a new board");
@@ -133,7 +153,7 @@ public class BoardActivity extends AppCompatActivity
             WebView myWebView = (WebView) findViewById(R.id.webview);
             WebSettings webSettings = myWebView.getSettings();
             webSettings.setJavaScriptEnabled(true);
-            myWebView.addJavascriptInterface(new WebAppInterface(this), "Android");
+            myWebView.addJavascriptInterface(new WebMessenger(this), "Android");
             myWebView.loadUrl("http://www.noahfreed.com/gomoku.html");
             localView();
 

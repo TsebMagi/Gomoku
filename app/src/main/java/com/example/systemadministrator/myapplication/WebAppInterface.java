@@ -1,6 +1,7 @@
 package com.example.systemadministrator.myapplication;
 
 import android.content.Context;
+import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 
