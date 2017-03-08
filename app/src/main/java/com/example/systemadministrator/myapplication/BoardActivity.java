@@ -309,9 +309,8 @@ public class BoardActivity extends AppCompatActivity
                 String user = "test";
                 final String js = "javascript:socketHandle.emit('message', {" +
                         "'to': 'everyone'," +
-                        "'message': 'Sent move'" +
+                        "'message': '" + xPos + yPos + "'" +
                         "});";
-                //"javascript:document.getElementById('message').value = '"+user+"';";
                 mWebView.setWebViewClient(new WebViewClient() {
                     @Override
                     public void onPageFinished(WebView view, String url) {
