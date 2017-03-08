@@ -309,8 +309,8 @@ public class BoardActivity extends AppCompatActivity
                 String user = "test";
                 final String js = "javascript:socketHandle.emit('gomokuMove', {" +
                         "'to': 'everyone'," +
-                        "'x': '" + xPos + "'," +
-                        "'y': '" + yPos + "'" +
+                        "'x': " + xPos + "," +
+                        "'y': " + yPos +
                         "});";
                 mWebView.setWebViewClient(new WebViewClient() {
                     @Override
