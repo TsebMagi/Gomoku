@@ -116,6 +116,13 @@ public class BoardActivity extends AppCompatActivity
 
         /** Show a move from the web page */
         @JavascriptInterface
+        public void setFirstPlayer(boolean b) {
+            Log.d("setFirstPlayer","First player is set to " + b);
+            ((NetworkPlayer) players[1]).goesFirst = b;
+        }
+
+        /** Show a move from the web page */
+        @JavascriptInterface
         public void showMove(int x, int y) {
             Log.d("showMove","Received move " + x + " " + y);
             Coordinates xy = new Coordinates(x,y);
