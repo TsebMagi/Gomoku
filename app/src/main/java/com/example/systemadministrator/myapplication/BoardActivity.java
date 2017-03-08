@@ -307,9 +307,10 @@ public class BoardActivity extends AppCompatActivity
                 settings.setJavaScriptEnabled(true);
                 mWebView.addJavascriptInterface(new WebMessenger(this), "Android");
                 String user = "test";
-                final String js = "javascript:socketHandle.emit('message', {" +
+                final String js = "javascript:socketHandle.emit('gomokuMove', {" +
                         "'to': 'everyone'," +
-                        "'message': '" + xPos + yPos + "'" +
+                        "'x': '" + xPos + "'," +
+                        "'y': '" + yPos + "'" +
                         "});";
                 mWebView.setWebViewClient(new WebViewClient() {
                     @Override
@@ -333,7 +334,7 @@ public class BoardActivity extends AppCompatActivity
             players[0].setHasChosen(false);
             playerTurn = 1;
             switchTimers(0);
-            if(players[0] instanceof NetworkPlayer)
+            if(players[0] instanceof NetworkPlayer) //this should never be true, right?
                 ((NetworkPlayer) players[1]).sendMove(xPos, yPos);
             else if(players[0] instanceof AIPlayer && !gameOverFlag){
                 doAIMove();
