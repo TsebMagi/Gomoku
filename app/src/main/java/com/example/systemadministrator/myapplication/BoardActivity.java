@@ -14,8 +14,10 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
+import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -157,11 +159,42 @@ public class BoardActivity extends AppCompatActivity
             //playerWaiting = true;
 
             //Website used for passing messages between clients
-            WebView myWebView = (WebView) findViewById(R.id.webview);
+            WebView mWebView = (WebView) findViewById(R.id.webview);
+            String url = "http://www.noahfreed.com/gomoku.html";
+            mWebView.loadUrl(url);
+            WebSettings settings = mWebView.getSettings();
+            settings.setJavaScriptEnabled(true);
+            String user = "test";
+            final String js = "javascript:document.getElementById('message').value = '"+user+"';";
+            mWebView.setWebViewClient(new WebViewClient() {
+
+                                          @Override
+                                          public void onPageFinished(WebView view, String url) {
+                                              super.onPageFinished(view, url);
+
+                                              if (true) {
+                                                  view.evaluateJavascript(js, new ValueCallback<String>() {
+                                                      @Override
+                                                      public void onReceiveValue(String s) {
+
+                                                      }
+                                                  });
+                                              } else {
+                                                  view.loadUrl(js);
+                                              }
+                                          };
+                                      });
+            /*WebView myWebView = (WebView) findViewById(R.id.webview);
             WebSettings webSettings = myWebView.getSettings();
             webSettings.setJavaScriptEnabled(true);
+            webSettings.setDomStorageEnabled(true);
             myWebView.addJavascriptInterface(new WebMessenger(this), "Android");
-            myWebView.loadUrl("http://www.noahfreed.com/gomoku.html");
+            myWebView.loadUrl("http://www.noahfreed.com/gomoku.html");*/
+            //String username = "test";
+            //String summary = "javascript:var uselessvar =document.getElementById('message').val='"+username+"';";//"<html><body>You scored <b>192</b> points.</body></html>";
+            //myWebView.loadDataWithBaseURL("http://www.noahfreed.com/gomoku.html", summary, "text/javascript", null, "http://www.noahfreed.com/gomoku.html");
+            //String username = "test";
+            //myWebView.loadUrl("javascript:var uselessvar =document.getElementById('message').val='"+username+"';");
             localView();
 
             //Create API client
@@ -266,8 +299,15 @@ public class BoardActivity extends AppCompatActivity
             players[1].setHasChosen(false);
             playerTurn = 2;
             switchTimers(1);
-            if (players[1] instanceof NetworkPlayer)
+            if (players[1] instanceof NetworkPlayer) {
                 ((NetworkPlayer) players[1]).sendMove(xPos, yPos);
+                /*WebView myWebView = (WebView) findViewById(R.id.webview);
+                WebSettings webSettings = myWebView.getSettings();
+                webSettings.setJavaScriptEnabled(true);
+                webSettings.setDomStorageEnabled(true);
+                String username = "test";
+                myWebView.evaluateJavascript("javascript:document.getElementById('message').val='"+username+"';",null);*/
+            }
             else if (players[1] instanceof AIPlayer && !gameOverFlag) {
                 doAIMove();
             }

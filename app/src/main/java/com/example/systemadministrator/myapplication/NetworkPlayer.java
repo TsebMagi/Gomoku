@@ -19,7 +19,8 @@ import android.util.Log;
 
     public void sendMove(int xPos, int yPos){
         Log.d("sendMove", "Sent move " + xPos + " " + yPos);
-        
+        //String username = "test";
+        //myWebView.loadUrl("javascript:var uselessvar =document.getElementById('message').value='"+username+"';");
         return;
     }
 
