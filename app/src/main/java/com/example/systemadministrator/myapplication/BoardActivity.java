@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.TextView;
@@ -132,6 +133,7 @@ public class BoardActivity extends AppCompatActivity
             WebView myWebView = (WebView) findViewById(R.id.webview);
             WebSettings webSettings = myWebView.getSettings();
             webSettings.setJavaScriptEnabled(true);
+            myWebView.addJavascriptInterface(new WebAppInterface(this), "Android");
             myWebView.loadUrl("http://www.noahfreed.com/gomoku.html");
             localView();
 
