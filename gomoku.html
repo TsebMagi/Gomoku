@@ -45,14 +45,32 @@
 		<title>Gomoku Online</title>
 	</head>
 	<body>
-		<div id="chat" class="floatl sidebar chat">
+		<div id="chat" class="sidebar chat">
 			<h3>Chat</h3>
 			<input id="message" type="text" placeholder="message">
-			<input id="submit" type="button" value="submit">
+			<input id="submit" type="button" value="submit" onClick="showAndroidToast('Hello Android!')">
 			<br>
 			<pre id="output"></pre>
 		</div>
+		<div>
+			<input type="button" value="Say hello" onClick="showAndroidToast('Hello Android!')">
+		</div>
+		<div>
+			<input type="button" value="Say hi" onClick="showAndroidMove(1,1)">
+		</div>
 		<script type="text/javascript">
+			function showAndroidToast(toast) {
+				Android.showToast(toast);
+			}
+
+			function showAndroidMove(x,y) {
+				Android.showMove(x,y);
+			}
+
+			function setAndroidFirstPlayer(b) {
+				Android.setFirstPlayer(b);
+			}
+
 			//Establish communication with the server
 			var socketHandle = io.connect('http://75.98.169.85:8080/');
 
@@ -60,6 +78,11 @@
 
 			socketHandle.on('hello', function(data) {
 				strIdent = data.id;
+				if (data.user === 1){
+					setAndroidFirstPlayer(true);
+				} else {
+					setAndroidFirstPlayer(false);
+				}
 			});
 			//Chat
 			socketHandle.on('message', function(data) {
