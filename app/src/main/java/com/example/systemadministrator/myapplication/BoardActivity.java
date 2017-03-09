@@ -170,7 +170,6 @@ public class BoardActivity extends AppCompatActivity
                     "'to': 'everyone'," +
                     "'message': 'Gomoku connection'" +
                     "});";
-                    //"javascript:document.getElementById('message').value = '"+user+"';";
             mWebView.setWebViewClient(new WebViewClient() {
                   @Override
                   public void onPageFinished(WebView view, String url) {
@@ -183,17 +182,6 @@ public class BoardActivity extends AppCompatActivity
                       });
                   };
             });
-            /*WebView myWebView = (WebView) findViewById(R.id.webview);
-            WebSettings webSettings = myWebView.getSettings();
-            webSettings.setJavaScriptEnabled(true);
-            webSettings.setDomStorageEnabled(true);
-            myWebView.addJavascriptInterface(new WebMessenger(this), "Android");
-            myWebView.loadUrl("http://www.noahfreed.com/gomoku.html");*/
-            //String username = "test";
-            //String summary = "javascript:var uselessvar =document.getElementById('message').val='"+username+"';";//"<html><body>You scored <b>192</b> points.</body></html>";
-            //myWebView.loadDataWithBaseURL("http://www.noahfreed.com/gomoku.html", summary, "text/javascript", null, "http://www.noahfreed.com/gomoku.html");
-            //String username = "test";
-            //myWebView.loadUrl("javascript:var uselessvar =document.getElementById('message').val='"+username+"';");
             localView();
 
             //Create API client
