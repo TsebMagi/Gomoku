@@ -113,6 +113,10 @@
                                        	jQuery('#message').val('');
 				}
 			});
+			//Receive Gomoku moves
+			socketHandle.on('gomokuMove', function(data) {
+				showAndroidMove(data.x, data.y);
+			});
 		</script>
 	</body>
 </html>
