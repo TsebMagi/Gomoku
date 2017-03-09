@@ -116,7 +116,7 @@ public class BoardActivity extends AppCompatActivity
             super(c);
         }
 
-        /** Show a move from the web page */
+        /** Get who goes first from the web page */
         @JavascriptInterface
         public void setFirstPlayer(boolean b) {
             Log.d("setFirstPlayer","First player is set to " + b);
