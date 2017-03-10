@@ -165,7 +165,7 @@ public class BoardActivity extends AppCompatActivity
         else if(player2Type.equals("Network")) {
             Log.d(TAG + " onCreate", "Setting up a network game");
             players[1] = new NetworkPlayer();
-            //playerWaiting = true;
+            playerWaiting = true;
             initializeFirstPlayer = true;
 
             //Website used for passing messages between clients
@@ -197,7 +197,8 @@ public class BoardActivity extends AppCompatActivity
             else {
                 Log.d("Check network init", "false");
             }
-            localView();
+            //localView();
+            onlineView();
 
 
             //Create API client
@@ -640,9 +641,12 @@ public class BoardActivity extends AppCompatActivity
     }
 
     public void onLoginClick(View v) {
-        loggedin = false;
+        playerWaiting = false;
+        initBoard();
+        localView();
+        /*loggedin = false;
         toggleLogin();
-        mGoogleApiClient.connect();
+        mGoogleApiClient.connect();*/
     }
 
     public void onLogOutClick(View v) {

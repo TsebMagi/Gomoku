@@ -79,7 +79,7 @@
         android:layout_alignEnd="@+id/Board" />
 
     <Button
-        android:text="log in"
+        android:text="Start Game"
         android:visibility="gone"
         android:onClick="onLoginClick"
         android:layout_width="match_parent"
