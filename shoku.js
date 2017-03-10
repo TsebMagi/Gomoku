@@ -61,7 +61,8 @@ io.on('connection', function(socketHandle) {
 	}
 	// send the new client the 'hello' event, containing the assigned id - example: { 'id':'9T1P4pUQ' }
 	socketHandle.emit('hello', {
-		'id': socketHandle.id
+		'id': socketHandle.id,
+		'user': user
 	});
 	// send everyone the 'clients' event, containing an array of the connected clients - example: { 'array':['GxwYr9Uz','9T1P4pUQ'] }
 	var array = [];
