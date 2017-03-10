@@ -96,7 +96,7 @@ public class BoardActivity extends AppCompatActivity
     //resolving connection
     private boolean mResolvingConnectionFailure = false;
 
-
+    boolean IAmP1;
 
     private static final int RC_SIGN_IN = 9001;
     final static int REQUEST_CODE_RESOLVE_ERR = 1234;
@@ -120,7 +120,8 @@ public class BoardActivity extends AppCompatActivity
         @JavascriptInterface
         public void setFirstPlayer(boolean b) {
             Log.d("setFirstPlayer","First player is set to " + b);
-            ((NetworkPlayer) players[1]).goesFirst = b;
+            //((NetworkPlayer) players[1]).goesFirst = b;
+            IAmP1 = b;
         }
 
         /** Show a move from the web page */
@@ -128,8 +129,13 @@ public class BoardActivity extends AppCompatActivity
         public void showMove(int x, int y) {
             Log.d("showMove","Received move " + x + " " + y);
             Coordinates xy = new Coordinates(x,y);
-            ((NetworkPlayer) players[1]).setNextMove(xy);
-            ((NetworkPlayer) players[1]).setMadeMove(true);
+            if(IAmP1) {
+                ((NetworkPlayer) players[1]).setNextMove(xy);
+                ((NetworkPlayer) players[1]).setMadeMove(true);
+            } else {
+                ((NetworkPlayer) players[0]).setNextMove(xy);
+                ((NetworkPlayer) players[0]).setMadeMove(true);
+            }
         }
     }
 
@@ -165,7 +171,6 @@ public class BoardActivity extends AppCompatActivity
             WebSettings settings = mWebView.getSettings();
             settings.setJavaScriptEnabled(true);
             mWebView.addJavascriptInterface(new WebMessenger(this), "Android");
-            String user = "test";
             final String js = "javascript:socketHandle.emit('message', {" +
                     "'to': 'everyone'," +
                     "'message': 'Gomoku connection'" +
@@ -182,6 +187,10 @@ public class BoardActivity extends AppCompatActivity
                       });
                   };
             });
+            if(!IAmP1) {
+                players[1] = new HumanPlayer();
+                players[0] = new NetworkPlayer();
+            }
             localView();
 
             //Create API client
@@ -323,7 +332,7 @@ public class BoardActivity extends AppCompatActivity
             playerTurn = 1;
             switchTimers(0);
             if(players[0] instanceof NetworkPlayer) {
-                ((NetworkPlayer) players[1]).sendMove(xPos, yPos);
+                ((NetworkPlayer) players[0]).sendMove(xPos, yPos);
                 WebView mWebView = (WebView) findViewById(R.id.webview);
                 String url = "http://www.noahfreed.com/gomoku.html";
                 mWebView.loadUrl(url);
@@ -418,7 +427,9 @@ public class BoardActivity extends AppCompatActivity
             runOnUiThread(new Runnable() {
                 public void run () {
                     if( players[1] instanceof NetworkPlayer)
-                        checkNetworkPlayer();
+                        checkNetworkPlayer(1);
+                    else if (players[0] instanceof NetworkPlayer)
+                        checkNetworkPlayer(0);
                     if(! gameOverFlag) {
                         gameOverFlag = players[0].checkExpired() || players[1].checkExpired();
                         checkGameOver();
@@ -428,12 +439,12 @@ public class BoardActivity extends AppCompatActivity
         }
     }
 
-    private void checkNetworkPlayer(){
-        if(playerTurn == 2 && ((NetworkPlayer) players[1]).getMadeMove()) {
-            Coordinates move = ((NetworkPlayer) players[1]).getNextMove();
+    private void checkNetworkPlayer(int n){
+        if(playerTurn == n+1 && ((NetworkPlayer) players[n]).getMadeMove()) {
+            Coordinates move = ((NetworkPlayer) players[n]).getNextMove();
             if(piecesOnBoard.moveIsValid(move)) {
                 makeMove(move);
-                ((NetworkPlayer) players[1]).setMadeMove(false);
+                ((NetworkPlayer) players[n]).setMadeMove(false);
             }
         }
     }

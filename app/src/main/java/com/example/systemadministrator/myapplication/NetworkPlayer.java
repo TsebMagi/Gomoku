@@ -13,7 +13,7 @@ import android.util.Log;
     public NetworkPlayer(){
         super();
         this.nextMove = null;
-        setGoesFirst();
+        //setGoesFirst();
         madeMove = false;
     }
 
