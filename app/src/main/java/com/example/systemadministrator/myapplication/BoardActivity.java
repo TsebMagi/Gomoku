@@ -322,8 +322,35 @@ public class BoardActivity extends AppCompatActivity
             players[0].setHasChosen(false);
             playerTurn = 1;
             switchTimers(0);
-            if(players[0] instanceof NetworkPlayer) //this should never be true, right?
+            if(players[0] instanceof NetworkPlayer) {
                 ((NetworkPlayer) players[1]).sendMove(xPos, yPos);
+                WebView mWebView = (WebView) findViewById(R.id.webview);
+                String url = "http://www.noahfreed.com/gomoku.html";
+                mWebView.loadUrl(url);
+                WebSettings settings = mWebView.getSettings();
+                settings.setJavaScriptEnabled(true);
+                mWebView.addJavascriptInterface(new WebMessenger(this), "Android");
+                String user = "test";
+                final String js = "javascript:socketHandle.emit('gomokuMove', {" +
+                        "'to': 'everyone'," +
+                        "'x': " + xPos + "," +
+                        "'y': " + yPos +
+                        "});";
+                mWebView.setWebViewClient(new WebViewClient() {
+                    @Override
+                    public void onPageFinished(WebView view, String url) {
+                        super.onPageFinished(view, url);
+                        view.evaluateJavascript(js, new ValueCallback<String>() {
+                            @Override
+                            public void onReceiveValue(String s) {
+
+                            }
+                        });
+                    }
+
+                    ;
+                });
+            }
             else if(players[0] instanceof AIPlayer && !gameOverFlag){
                 doAIMove();
             }
