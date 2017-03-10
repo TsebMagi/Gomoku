@@ -121,6 +121,11 @@ public class BoardActivity extends AppCompatActivity
         public void setFirstPlayer(boolean b) {
             Log.d("setFirstPlayer","First player is set to " + b);
             ((NetworkPlayer) players[1]).goesFirst = b;
+            if(b){
+                showToast("You are second player");
+            } else {
+                showToast("You are first player");
+            }
         }
 
         /** Show a move from the web page */
