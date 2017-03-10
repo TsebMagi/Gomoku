@@ -426,9 +426,9 @@ public class BoardActivity extends AppCompatActivity
         public void run() {
             runOnUiThread(new Runnable() {
                 public void run () {
-                    if( players[1] instanceof NetworkPlayer)
+                    if( players[1] instanceof NetworkPlayer && players[0].hasChosen)
                         checkNetworkPlayer(1);
-                    else if (players[0] instanceof NetworkPlayer)
+                    else if (players[0] instanceof NetworkPlayer && players[1].hasChosen)
                         checkNetworkPlayer(0);
                     if(! gameOverFlag) {
                         gameOverFlag = players[0].checkExpired() || players[1].checkExpired();
