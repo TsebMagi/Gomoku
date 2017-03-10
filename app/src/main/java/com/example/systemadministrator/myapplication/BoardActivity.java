@@ -96,7 +96,7 @@ public class BoardActivity extends AppCompatActivity
     //resolving connection
     private boolean mResolvingConnectionFailure = false;
 
-
+    boolean initializeFirstPlayer = false;
 
     private static final int RC_SIGN_IN = 9001;
     final static int REQUEST_CODE_RESOLVE_ERR = 1234;
@@ -120,11 +120,15 @@ public class BoardActivity extends AppCompatActivity
         @JavascriptInterface
         public void setFirstPlayer(boolean b) {
             Log.d("setFirstPlayer","First player is set to " + b);
-            ((NetworkPlayer) players[1]).goesFirst = b;
-            if(b){
-                showToast("You are second player");
-            } else {
-                showToast("You are first player");
+            if (initializeFirstPlayer) {
+                ((NetworkPlayer) players[1]).goesFirst = b;
+                initializeFirstPlayer = false;
+                    if(b) {
+                        showToast("You are second player");
+                    }
+                    else {
+                        showToast("You are first player");
+                    }
             }
         }
 
@@ -162,6 +166,7 @@ public class BoardActivity extends AppCompatActivity
             Log.d(TAG + " onCreate", "Setting up a network game");
             players[1] = new NetworkPlayer();
             //playerWaiting = true;
+            initializeFirstPlayer = true;
 
             //Website used for passing messages between clients
             WebView mWebView = (WebView) findViewById(R.id.webview);
@@ -170,7 +175,6 @@ public class BoardActivity extends AppCompatActivity
             WebSettings settings = mWebView.getSettings();
             settings.setJavaScriptEnabled(true);
             mWebView.addJavascriptInterface(new WebMessenger(this), "Android");
-            String user = "test";
             final String js = "javascript:socketHandle.emit('message', {" +
                     "'to': 'everyone'," +
                     "'message': 'Gomoku connection'" +
@@ -187,7 +191,14 @@ public class BoardActivity extends AppCompatActivity
                       });
                   };
             });
+            if (players[1].getGoesFirst()) {
+                Log.d("Check network init", "true");
+            }
+            else {
+                Log.d("Check network init", "false");
+            }
             localView();
+
 
             //Create API client
             /*mGoogleApiClient = new GoogleApiClient.Builder(this)
