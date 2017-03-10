@@ -330,7 +330,6 @@ public class BoardActivity extends AppCompatActivity
                 WebSettings settings = mWebView.getSettings();
                 settings.setJavaScriptEnabled(true);
                 mWebView.addJavascriptInterface(new WebMessenger(this), "Android");
-                String user = "test";
                 final String js = "javascript:socketHandle.emit('gomokuMove', {" +
                         "'to': 'everyone'," +
                         "'x': " + xPos + "," +
