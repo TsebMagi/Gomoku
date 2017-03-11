@@ -221,6 +221,7 @@ public class BoardActivity extends AppCompatActivity
     }
 
     public void initBoard(){
+        Log.d("Initializing board", "true");
 
         piecesOnBoard = new GameBoard(dimension);
         boardArray = new ImageView[dimension][dimension];
@@ -281,7 +282,7 @@ public class BoardActivity extends AppCompatActivity
                 boardArray[i][j].setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (!gameOverFlag && !players[playerTurn-1].hasChosen() && players[playerTurn-1] instanceof HumanPlayer && piecesOnBoard.getPieceAtXY(x,y) == 0) { // make sure cell is empty
+                        if (!gameOverFlag && !players[playerTurn-1].hasChosen() && !(players[playerTurn-1] instanceof AIPlayer) && !(players[playerTurn-1] instanceof NetworkPlayer) && piecesOnBoard.getPieceAtXY(x,y) == 0) { // make sure cell is empty
                             xPos = x;
                             yPos = y; //when a location is clicked it sets global x,y variables to be accessed in other functions
                             makeMove();
