@@ -450,6 +450,7 @@ public class BoardActivity extends AppCompatActivity
             Coordinates move = ((NetworkPlayer) players[1]).getNextMove();
             if(piecesOnBoard.moveIsValid(move)) {
                 makeMove(move);
+                switchTimers(0);
                 ((NetworkPlayer) players[1]).setMadeMove(false);
             }
         }
