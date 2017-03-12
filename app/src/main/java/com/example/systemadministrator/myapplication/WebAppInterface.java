@@ -20,6 +20,6 @@ public class WebAppInterface {
     /** Show a toast from the web page */
     @JavascriptInterface
     public void showToast(String toast) {
-        Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, toast, Toast.LENGTH_LONG).show();
     }
 }

@@ -117,7 +117,7 @@ public class BoardActivity extends AppCompatActivity
         }
 
         /** Get who goes first from the web page */
-        @JavascriptInterface
+/*        @JavascriptInterface
         public void setFirstPlayer(boolean b) {
             Log.d("setFirstPlayer","First player is set to " + b);
             if (initializeFirstPlayer) {
@@ -130,7 +130,7 @@ public class BoardActivity extends AppCompatActivity
                         showToast("You are first player");
                     }
             }
-        }
+        }*/
 
         /** Show a move from the web page */
         @JavascriptInterface
@@ -139,6 +139,23 @@ public class BoardActivity extends AppCompatActivity
             Coordinates xy = new Coordinates(x,y);
             ((NetworkPlayer) players[1]).setNextMove(xy);
             ((NetworkPlayer) players[1]).setMadeMove(true);
+        }
+
+        /** Initialize the board for an online game */
+        @JavascriptInterface
+        public void initGomoku(int p) {
+            Log.d("initGomoku","Initialized board for network game as player " + p);
+            if(p == 2) {
+                showToast("Second player, hit start to begin");
+                ((NetworkPlayer) players[1]).goesFirst = true;
+            }
+            else {
+                showToast("First player, hit start to begin");
+                ((NetworkPlayer) players[1]).goesFirst = false;
+            }
+            playerWaiting = false;
+            //initBoard();
+            //localView();
         }
     }
 
@@ -191,12 +208,12 @@ public class BoardActivity extends AppCompatActivity
                       });
                   };
             });
-            if (players[1].getGoesFirst()) {
+            /*if (players[1].getGoesFirst()) {
                 Log.d("Check network init", "true");
             }
             else {
                 Log.d("Check network init", "false");
-            }
+            }*/
             //localView();
             onlineView();
 
@@ -340,7 +357,7 @@ public class BoardActivity extends AppCompatActivity
             players[0].setHasChosen(false);
             playerTurn = 1;
             switchTimers(0);
-            if(players[0] instanceof NetworkPlayer) {
+            if(players[0] instanceof NetworkPlayer) { //this should never be true, right?
                 ((NetworkPlayer) players[1]).sendMove(xPos, yPos);
                 WebView mWebView = (WebView) findViewById(R.id.webview);
                 String url = "http://www.noahfreed.com/gomoku.html";
@@ -643,9 +660,38 @@ public class BoardActivity extends AppCompatActivity
     }
 
     public void onLoginClick(View v) {
-        playerWaiting = false;
-        initBoard();
-        localView();
+        if(playerWaiting) {
+            Context context = getApplicationContext();
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, "Please wait for a second player", duration);
+            toast.show();
+            WebView mWebView = (WebView) findViewById(R.id.webview);
+            String url = "http://www.noahfreed.com/gomoku.html";
+            mWebView.loadUrl(url);
+            WebSettings settings = mWebView.getSettings();
+            settings.setJavaScriptEnabled(true);
+            mWebView.addJavascriptInterface(new WebMessenger(this), "Android");
+            final String js = "javascript:socketHandle.emit('gomokuStart', {" +
+                    "'to': 'everyone'" +
+                    "});";
+            mWebView.setWebViewClient(new WebViewClient() {
+                @Override
+                public void onPageFinished(WebView view, String url) {
+                    super.onPageFinished(view, url);
+                    view.evaluateJavascript(js, new ValueCallback<String>() {
+                        @Override
+                        public void onReceiveValue(String s) {
+
+                        }
+                    });
+                }
+
+                ;
+            });
+        } else {
+            initBoard();
+            localView();
+        }
         /*loggedin = false;
         toggleLogin();
         mGoogleApiClient.connect();*/
