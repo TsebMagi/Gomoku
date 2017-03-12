@@ -545,6 +545,8 @@ public class BoardActivity extends AppCompatActivity
 
     //regame sets the array to 0, the loop clears the board ui.
     public void onReGameClick(View v) {
+        if( players[1] instanceof NetworkPlayer)
+            ((NetworkPlayer) players[1]).setMadeMove(false);
         piecesOnBoard.reGame();
         for(int i = 0; i < dimension; i++) {
             for(int j = 0; j < dimension; j++) {
