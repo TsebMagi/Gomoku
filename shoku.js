@@ -46,6 +46,9 @@ var currentStep = 'Deploy';
 var sunReady = false;
 var moonReady = false;
 
+var gomokuPCount = 0;
+var gomokuP1;
+
 io.on('connection', function(socketHandle) {
 	// assign a random id to the socket and store the socketHandle in the objectClients variable - example: '9T1P4pUQ'
 	socketHandle.id = Math.random().toString(36).substr(2, 8);
@@ -131,6 +134,22 @@ io.on('connection', function(socketHandle) {
 					'y': objectData.y
 				});
 			}
+	});
+
+	socketHandle.on('gomokuStart', function(objectData) {
+		gomokuPCount++;
+		if(gomokuPCount >= 2) {
+			socketHandle.emit('gomokuInit', {
+				'p': 2
+			});
+			gomokuP1.emit('gomokuInit', {
+				'p': 1
+			});
+			gomokuPCount = 0;
+		}
+		else {
+			gomokuP1 = socketHandle;
+		}
 	});
 
 	socketHandle.on('pushSTM', function() {

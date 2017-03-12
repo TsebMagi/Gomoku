@@ -67,8 +67,8 @@
 				Android.showMove(x,y);
 			}
 
-			function setAndroidFirstPlayer(b) {
-				Android.setFirstPlayer(b);
+			function androidInit(p) {
+				Android.initGomoku(p);
 			}
 
 			//Establish communication with the server
@@ -78,11 +78,6 @@
 
 			socketHandle.on('hello', function(data) {
 				strIdent = data.id;
-				if (data.user === 1){
-					setAndroidFirstPlayer(true);
-				} else {
-					setAndroidFirstPlayer(false);
-				}
 			});
 			//Chat
 			socketHandle.on('message', function(data) {
@@ -116,6 +111,10 @@
 			//Receive Gomoku moves
 			socketHandle.on('gomokuMove', function(data) {
 				showAndroidMove(data.x, data.y);
+			});
+			//Receive Gomoku init
+			socketHandle.on('gomokuInit', function(data) {
+				androidInit(data.p);
 			});
 		</script>
 	</body>
