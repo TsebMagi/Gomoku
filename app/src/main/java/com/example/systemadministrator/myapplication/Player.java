@@ -64,7 +64,8 @@ abstract public class Player {
                 timeRemaining = allSeconds*1000;
                 int min = allSeconds /60;
                 int sec = allSeconds % 60;
-                String newTime = originalText + "\n" + Integer.toString(min) + ":" + Integer.toString(sec);
+                String secString = (sec > 9) ? Integer.toString(sec) : "0" + Integer.toString(sec);
+                String newTime = originalText + "\n" + Integer.toString(min) + ":" + secString;
                 text.setText(newTime);
             }
 
