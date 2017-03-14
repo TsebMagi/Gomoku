@@ -105,6 +105,7 @@ public class BoardActivity extends AppCompatActivity
     final static int MIN_PLAYERS = 2;
     final static int RC_INVITATION_INBOX = 3821;
     private static final String TAG = "BoardActivity";
+    private final String SERVERURL = "http://www.noahfreed.com/gomoku.html";
 
     class WebMessenger extends WebAppInterface {
         /**
@@ -187,7 +188,7 @@ public class BoardActivity extends AppCompatActivity
 
             //Website used for passing messages between clients
             WebView mWebView = (WebView) findViewById(R.id.webview);
-            String url = "http://www.noahfreed.com/gomoku.html";
+            String url = SERVERURL;
             mWebView.loadUrl(url);
             WebSettings settings = mWebView.getSettings();
             settings.setJavaScriptEnabled(true);
@@ -324,7 +325,7 @@ public class BoardActivity extends AppCompatActivity
             if (players[1] instanceof NetworkPlayer) {
                 ((NetworkPlayer) players[1]).sendMove(xPos, yPos);
                 WebView mWebView = (WebView) findViewById(R.id.webview);
-                String url = "http://www.noahfreed.com/gomoku.html";
+                String url = SERVERURL;
                 mWebView.loadUrl(url);
                 WebSettings settings = mWebView.getSettings();
                 settings.setJavaScriptEnabled(true);
@@ -360,7 +361,7 @@ public class BoardActivity extends AppCompatActivity
             if(players[0] instanceof NetworkPlayer) { //this should never be true, right?
                 ((NetworkPlayer) players[1]).sendMove(xPos, yPos);
                 WebView mWebView = (WebView) findViewById(R.id.webview);
-                String url = "http://www.noahfreed.com/gomoku.html";
+                String url = SERVERURL;
                 mWebView.loadUrl(url);
                 WebSettings settings = mWebView.getSettings();
                 settings.setJavaScriptEnabled(true);
@@ -668,7 +669,7 @@ public class BoardActivity extends AppCompatActivity
             Toast toast = Toast.makeText(context, "Please wait for a second player", duration);
             toast.show();
             WebView mWebView = (WebView) findViewById(R.id.webview);
-            String url = "http://www.noahfreed.com/gomoku.html";
+            String url = SERVERURL;
             mWebView.loadUrl(url);
             WebSettings settings = mWebView.getSettings();
             settings.setJavaScriptEnabled(true);
