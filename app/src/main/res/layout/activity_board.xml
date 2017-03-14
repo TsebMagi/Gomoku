@@ -73,7 +73,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/regameButton"
-        android:layout_marginEnd="76dp"
+        android:layout_marginEnd="100dp"
         android:onClick="onReGameClick"
         android:layout_alignParentBottom="true"
         android:layout_alignEnd="@+id/Board" />
